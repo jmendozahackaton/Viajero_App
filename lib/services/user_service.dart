@@ -48,6 +48,12 @@ class UserService {
 
   /// Eliminar un usuario
   Future<void> deleteUser(String userId) async {
-    await _usersCollection.doc(userId).delete();
+    try {
+      await _usersCollection.doc(userId).delete();
+      print('Usuario $userId eliminado correctamente');
+    } catch (e) {
+      print('Error al eliminar usuario: $e');
+      rethrow;
+    }
   }
 }

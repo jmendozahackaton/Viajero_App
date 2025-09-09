@@ -17,12 +17,20 @@ class UserModel {
 
   /// Crear un objeto desde un Map (ej: documento Firestore)
   factory UserModel.fromMap(Map<String, dynamic> map, String documentId) {
+    // Función helper para obtener valor sin importar case o existencia
+    dynamic getValue(Map<String, dynamic> data, List<String> possibleKeys) {
+      for (var key in possibleKeys) {
+        if (data.containsKey(key)) return data[key];
+      }
+      return null;
+    }
+
     return UserModel(
       userId: documentId,
-      email: map['Email'] ?? '',
-      nombre: map['Nombre'] ?? '',
-      rol: map['Rol'] ?? 'Pasajero',
-      activo: map['Activo'] ?? false,
+      email: getValue(map, ['email', 'Email'])?.toString() ?? '',
+      nombre: getValue(map, ['nombre', 'Nombre'])?.toString() ?? '',
+      rol: getValue(map, ['rol', 'Rol'])?.toString() ?? 'Pasajero',
+      activo: getValue(map, ['activo', 'Activo']) as bool? ?? false,
     );
   }
 
