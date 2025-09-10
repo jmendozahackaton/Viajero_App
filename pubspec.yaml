@@ -44,6 +44,9 @@ dependencies:
 
   image_picker: ^1.2.0     # Para tomar/seleccionar fotos en reportes
   uuid: ^4.5.1               # Generar IDs si necesitas
+  unicode: ^0.3.1
+  test_api: ^0.7.6
+  meta: ^1.16.0
 
 dev_dependencies:
   flutter_test:

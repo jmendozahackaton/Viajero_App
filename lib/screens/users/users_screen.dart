@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hackaton_app/screens/users/user_form_screen.dart';
-import '/models/user_model.dart';
+import '/data/models/user_model.dart';
 import '/services/user_service.dart';
 
 class UsersScreen extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/models/user_model.dart';
+import '/data/models/user_model.dart';
 import '/services/user_service.dart';
 
 class UserFormScreen extends StatefulWidget {

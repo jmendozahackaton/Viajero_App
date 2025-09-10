@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hackaton_app/firebase_options.dart';
+import 'package:hackaton_app/data/datasources/firebase_options.dart';
 import 'package:hackaton_app/screens/users/users_screen.dart';
 
 Future<void> main() async {
