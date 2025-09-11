@@ -15,37 +15,40 @@ dependencies:
   
   # Firebase productos esenciales
   cloud_firestore: ^6.0.1          # Base de datos
-  firebase_auth: ^5.2.0            # Autenticación (¡IMPORTANTE!)
+  firebase_auth: ^6.0.2            # Autenticación (¡IMPORTANTE!)
   firebase_storage: ^13.0.1        # Almacenamiento
-  firebase_messaging: ^14.7.0      # Notificaciones push (para alertas)
+  firebase_messaging: ^16.0.1      # Notificaciones push (para alertas)
   
   # Estado y Gestión de Datos
-  flutter_bloc: ^8.1.3             # BLoC para gestión de estado
+  flutter_bloc: ^9.1.1             # BLoC para gestión de estado
   equatable: ^2.0.5                # Para comparar objetos
   provider: ^6.1.1                 # Provider para inyección de dependencias
   
   # Navegación
-  go_router: ^13.0.1               # Navegación declarativa (recomendado)
+  go_router: ^16.2.1               # Navegación declarativa (recomendado)
   # O usar: auto_route: ^7.0.0     # Alternativa potente
   
   # Mapas y Geolocalización
   google_maps_flutter: ^2.5.0      # Mapas de Google (mejor para transporte)
-  geolocator: ^11.0.0              # Geolocalización
-  geocoding: ^2.1.1                # Geocodificación (direcciones → coordenadas)
+  geolocator: ^14.0.2              # Geolocalización
+  geocoding: ^4.0.0                # Geocodificación (direcciones → coordenadas)
   
   # UI y Utilidades
   cupertino_icons: ^1.0.8
   flutter_localizations:           # Internacionalización
     sdk: flutter
-  intl: ^0.19.0                    # Formato de fechas y números
   shared_preferences: ^2.2.2       # Almacenamiento local
   image_picker: ^1.2.0
   uuid: ^4.5.1
-  flutter_dotenv: ^5.1.0           # Variables de entorno (para API keys)
+  flutter_dotenv: ^6.0.0           # Variables de entorno (para API keys)
   
   # HTTP y Conexiones
   http: ^1.2.0                     # Cliente HTTP
-  connectivity_plus: ^5.0.0        # Verificar conectividad
+  connectivity_plus: ^6.1.5        # Verificar conectividad
+  characters: ^1.4.0
+  material_color_utilities: ^0.11.1
+  meta: ^1.16.0
+  test_api: ^0.7.6
 
 dev_dependencies:
   flutter_test:
