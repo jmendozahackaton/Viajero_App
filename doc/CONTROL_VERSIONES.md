@@ -40,3 +40,21 @@ refactor(models): optimizar serialización datos
 - Revisión de código obligatoria para merges
 - Tests requeridos para nuevas funcionalidades
 - Documentación actualizada con cada feature
+
+## PASOS SUBIR A RPOSITORIO GITHUB
+
+# Moverse a la rama de modificaciones
+git checkout modificaciones/implementar
+
+git add .
+git commit -m "Avance en la implementación"
+git push origin modificaciones/implementar
+
+# Ver qué cambió entre master y tu feature
+git diff master..modificaciones/implementar
+
+# Fusionar con main/master Volver a main
+git checkout master
+
+# Traer los cambios de la feature
+git merge modificaciones/implementar
