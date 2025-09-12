@@ -1,0 +1,1 @@
+Este proyecto es desarrollado para Hackathon Nicaragua 2025.

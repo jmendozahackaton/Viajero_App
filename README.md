@@ -1,16 +1,20 @@
-# hackaton_app
+# Viajero App - Sistema de Monitoreo de Transporte Público
 
-A new Flutter project.
+## Descripción
+Sistema de monitoreo en tiempo real del transporte público desarrollado para Hackathon Nicaragua 2025 - Temática Disruptivo. Mejora la eficiencia del sistema de transporte colectivo ofreciendo mayor seguridad y transparencia.
 
-## Getting Started
+## Objetivo
+- Para usuarios: Información de rutas en tiempo real, tiempos de espera estimados y planificador de viajes
+- Para IRTRAMMA: Monitoreo de flotas, gestión de rutas y análisis de datos
 
-This project is a starting point for a Flutter application.
+## Requerimientos Técnicos
+- **Flutter:** 3.35.3+
+- **Dart:** 3.9.2+
+- **Firebase:** Authentication, Firestore, Storage, Cloud Messaging
+- **Plataformas:** Android, iOS, Web
 
-A few resources to get you started if this is your first Flutter project:
+## Instalación y Configuración
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Prerrequisitos
+```bash
+flutter pub get
