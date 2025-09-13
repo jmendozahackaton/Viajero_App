@@ -30,16 +30,16 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<UserEntity> getUserById(String userId) async {
     try {
-      final doc = await _usersCollection.doc(userId).get();
+      final doc = await _firestore.collection('users').doc(userId).get();
 
       if (!doc.exists) {
-        throw Exception('User not found');
+        throw Exception('Usuario no encontrado');
       }
 
       final userModel = UserModel.fromMap(doc.data() as Map<String, dynamic>);
       return userModel.toEntity();
     } catch (e) {
-      throw Exception('Failed to get user: $e');
+      throw Exception('Error obteniendo usuario: $e');
     }
   }
 

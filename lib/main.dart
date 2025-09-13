@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hackaton_app/core/widgets/dependency_test_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:hackaton_app/core/providers/app_providers.dart';
 import 'package:hackaton_app/core/network/firebase_service.dart';
+import 'package:hackaton_app/core/routes/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,13 +20,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: AppProviders.providers,
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'Viajero App',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          useMaterial3: true,
         ),
-        home: const DependencyTestWidget(), // ← Cambiar temporalmente
+        routerConfig: AppRouter.router,
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
