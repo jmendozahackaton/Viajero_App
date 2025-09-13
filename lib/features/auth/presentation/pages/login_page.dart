@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:hackaton_app/domain/usecases/sign_in_usecase.dart';
+import 'package:hackaton_app/features/auth/presentation/blocs/auth_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,30 +15,51 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-  String? _errorMessage;
 
-  Future<void> _signIn() async {
+  @override
+  void initState() {
+    super.initState();
+    // Forzar verificación de autenticación cuando la página se carga
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authBloc = context.read<AuthBloc>();
+      authBloc.add(AuthCheckRequested());
+    });
+
+    _setupBlocListener();
+  }
+
+  void _setupBlocListener() {
+    final authBloc = context.read<AuthBloc>();
+
+    // Escuchar cambios de estado del BLoC
+    authBloc.stream.listen((state) {
+      if (state is AuthAuthenticated) {
+        // Login exitoso, navegar al home
+        GoRouter.of(context).go('/home');
+        setState(() => _isLoading = false);
+      } else if (state is AuthError) {
+        // Mostrar error
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(state.message)));
+        setState(() => _isLoading = false);
+      } else if (state is AuthLoading) {
+        setState(() => _isLoading = true);
+      } else if (state is AuthUnauthenticated) {
+        setState(() => _isLoading = false);
+      }
+    });
+  }
+
+  void _signIn() {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
-
-      try {
-        final signInUseCase = context.read<SignInUseCase>();
-        await signInUseCase.execute(
+      final authBloc = context.read<AuthBloc>();
+      authBloc.add(
+        AuthSignInRequested(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
-        );
-
-        // Navegar al home después de login exitoso
-        GoRouter.of(context).go('/home');
-      } catch (e) {
-        setState(() {
-          _errorMessage = e.toString().replaceFirst('Exception: ', '');
-          _isLoading = false;
-        });
-      }
+        ),
+      );
     }
   }
 
@@ -85,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       TextFormField(
                         controller: _emailController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Correo electrónico',
                           prefixIcon: Icon(Icons.email),
                           border: OutlineInputBorder(),
@@ -104,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: _passwordController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Contraseña',
                           prefixIcon: Icon(Icons.lock),
                           border: OutlineInputBorder(),
@@ -124,16 +145,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
 
-                // Mensaje de error
-                if (_errorMessage != null) ...[
-                  const SizedBox(height: 20),
-                  Text(
-                    _errorMessage!,
-                    style: TextStyle(color: Colors.red, fontSize: 14),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-
                 const SizedBox(height: 30),
 
                 // Botón de login
@@ -143,12 +154,12 @@ class _LoginPageState extends State<LoginPage> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _signIn,
                     child: _isLoading
-                        ? CircularProgressIndicator(
+                        ? const CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
                               Colors.white,
                             ),
                           )
-                        : Text('Iniciar Sesión'),
+                        : const Text('Iniciar Sesión'),
                   ),
                 ),
 
@@ -156,8 +167,8 @@ class _LoginPageState extends State<LoginPage> {
 
                 // Enlace a registro
                 TextButton(
-                  onPressed: _navigateToSignUp,
-                  child: Text('¿No tienes cuenta? Regístrate aquí'),
+                  onPressed: _isLoading ? null : _navigateToSignUp,
+                  child: const Text('¿No tienes cuenta? Regístrate aquí'),
                 ),
               ],
             ),

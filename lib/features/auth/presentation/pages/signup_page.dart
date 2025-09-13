@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:hackaton_app/domain/usecases/sign_up_usecase.dart';
+import 'package:hackaton_app/features/auth/presentation/blocs/auth_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -17,31 +17,43 @@ class _SignUpPageState extends State<SignUpPage> {
   final _confirmPasswordController = TextEditingController();
   final _nameController = TextEditingController();
   bool _isLoading = false;
-  String? _errorMessage;
 
-  Future<void> _signUp() async {
+  @override
+  void initState() {
+    super.initState();
+    _setupBlocListener();
+  }
+
+  void _setupBlocListener() {
+    final authBloc = context.read<AuthBloc>();
+
+    authBloc.stream.listen((state) {
+      if (state is AuthAuthenticated) {
+        // Registro exitoso, navegar al home
+        GoRouter.of(context).go('/home');
+        setState(() => _isLoading = false);
+      } else if (state is AuthError) {
+        // Mostrar error
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(state.message)));
+        setState(() => _isLoading = false);
+      } else if (state is AuthLoading) {
+        setState(() => _isLoading = true);
+      }
+    });
+  }
+
+  void _signUp() {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
-
-      try {
-        final signUpUseCase = context.read<SignUpUseCase>();
-        await signUpUseCase.execute(
+      final authBloc = context.read<AuthBloc>();
+      authBloc.add(
+        AuthSignUpRequested(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
           displayName: _nameController.text.trim(),
-        );
-
-        // Navegar al home después de registro exitoso
-        GoRouter.of(context).go('/home');
-      } catch (e) {
-        setState(() {
-          _errorMessage = e.toString().replaceFirst('Exception: ', '');
-          _isLoading = false;
-        });
-      }
+        ),
+      );
     }
   }
 
@@ -53,9 +65,9 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crear Cuenta'),
+        title: const Text('Crear Cuenta'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: _navigateToLogin,
         ),
       ),
@@ -84,7 +96,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   children: [
                     TextFormField(
                       controller: _nameController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Nombre completo',
                         prefixIcon: Icon(Icons.person),
                         border: OutlineInputBorder(),
@@ -99,7 +111,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _emailController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Correo electrónico',
                         prefixIcon: Icon(Icons.email),
                         border: OutlineInputBorder(),
@@ -118,7 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _passwordController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Contraseña',
                         prefixIcon: Icon(Icons.lock),
                         border: OutlineInputBorder(),
@@ -137,7 +149,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _confirmPasswordController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Confirmar contraseña',
                         prefixIcon: Icon(Icons.lock_outline),
                         border: OutlineInputBorder(),
@@ -157,16 +169,6 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
 
-              // Mensaje de error
-              if (_errorMessage != null) ...[
-                const SizedBox(height: 20),
-                Text(
-                  _errorMessage!,
-                  style: TextStyle(color: Colors.red, fontSize: 14),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-
               const SizedBox(height: 30),
 
               // Botón de registro
@@ -176,12 +178,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _signUp,
                   child: _isLoading
-                      ? CircularProgressIndicator(
+                      ? const CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
                             Colors.white,
                           ),
                         )
-                      : Text('Crear Cuenta'),
+                      : const Text('Crear Cuenta'),
                 ),
               ),
 
@@ -189,8 +191,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
               // Enlace a login
               TextButton(
-                onPressed: _navigateToLogin,
-                child: Text('¿Ya tienes cuenta? Inicia sesión aquí'),
+                onPressed: _isLoading ? null : _navigateToLogin,
+                child: const Text('¿Ya tienes cuenta? Inicia sesión aquí'),
               ),
             ],
           ),

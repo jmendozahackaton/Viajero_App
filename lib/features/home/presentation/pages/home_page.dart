@@ -103,11 +103,7 @@ class HomePage extends StatelessWidget {
                             title: 'Mapa de Rutas',
                             color: Colors.blue,
                             onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Mapa en desarrollo'),
-                                ),
-                              );
+                              GoRouter.of(context).go('/map');
                             },
                           ),
                           _buildFeatureCard(

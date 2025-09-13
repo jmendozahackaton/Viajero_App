@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart';
 import 'package:hackaton_app/domain/repositories/auth_repository.dart';
-import 'package:hackaton_app/domain/repositories/user_repository.dart'; // ← Importar UserRepository
+import 'package:hackaton_app/domain/repositories/user_repository.dart';
 import 'package:hackaton_app/domain/entities/user_entity.dart';
 
 part 'auth_event.dart';
@@ -8,30 +9,54 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
-  final UserRepository userRepository; // ← Agregar UserRepository
+  final UserRepository userRepository;
 
-  AuthBloc({
-    required this.authRepository,
-    required this.userRepository, // ← Recibir UserRepository
-  }) : super(AuthInitial()) {
+  AuthBloc({required this.authRepository, required this.userRepository})
+    : super(AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthSignInRequested>(_onAuthSignInRequested);
     on<AuthSignUpRequested>(_onAuthSignUpRequested);
     on<AuthSignOutRequested>(_onAuthSignOutRequested);
     on<AuthUserUpdated>(_onAuthUserUpdated);
+
+    // Escuchar cambios de autenticación de Firebase
+    _listenToAuthChanges();
+  }
+
+  // Método para escuchar cambios de autenticación
+  void _listenToAuthChanges() {
+    authRepository.authStateChanges.listen((user) async {
+      if (user != null) {
+        // Usuario autenticado, obtener datos completos
+        try {
+          final completeUser = await userRepository.getUserById(user.uid);
+          add(AuthUserUpdated(completeUser));
+        } catch (e) {
+          add(AuthCheckRequested()); // Forzar verificación
+        }
+      } else {
+        // Usuario no autenticado, emitir estado correspondiente
+        if (state is! AuthUnauthenticated) {
+          add(AuthCheckRequested());
+        }
+      }
+    });
   }
 
   Future<void> _onAuthCheckRequested(
     AuthCheckRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoading());
+    // Solo emitir loading si no estamos ya en un estado de loading
+    if (state is! AuthLoading) {
+      emit(AuthLoading());
+    }
 
     try {
       final currentUser = authRepository.currentUser;
 
       if (currentUser != null) {
-        // ✅ Usar userRepository para obtener datos completos
+        // Obtener usuario completo desde Firestore
         final user = await userRepository.getUserById(currentUser.uid);
         emit(AuthAuthenticated(user));
       } else {
@@ -39,6 +64,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } catch (e) {
       emit(AuthError('Error verificando autenticación: $e'));
+      // Después de error, verificar again después de un delay
+      await Future.delayed(const Duration(seconds: 2));
+      add(AuthCheckRequested());
     }
   }
 
@@ -49,15 +77,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      // ✅ AuthRepository para login (autenticación)
-      final user = await authRepository.signInWithEmailAndPassword(
+      await authRepository.signInWithEmailAndPassword(
         email: event.email,
         password: event.password,
       );
 
-      // ✅ UserRepository para obtener datos completos después del login
-      final completeUser = await userRepository.getUserById(user.uid);
-      emit(AuthAuthenticated(completeUser));
+      // Forzar verificación completa después del login
+      add(AuthCheckRequested());
     } catch (e) {
       emit(
         AuthError(
@@ -74,14 +100,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      // ✅ AuthRepository para registro (autenticación + creación en Firestore)
-      final user = await authRepository.signUpWithEmailAndPassword(
+      await authRepository.signUpWithEmailAndPassword(
         email: event.email,
         password: event.password,
         displayName: event.displayName,
       );
 
-      emit(AuthAuthenticated(user));
+      // Forzar verificación completa después del registro
+      add(AuthCheckRequested());
     } catch (e) {
       emit(
         AuthError(
@@ -99,13 +125,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try {
       await authRepository.signOut();
+      // ✅ Asegurarse de emitir UNAUTHENTICATED inmediatamente
       emit(AuthUnauthenticated());
     } catch (e) {
       emit(AuthError('Error cerrando sesión: $e'));
+      // Even en error, intentar verificar el estado actual
+      add(AuthCheckRequested());
     }
   }
 
   void _onAuthUserUpdated(AuthUserUpdated event, Emitter<AuthState> emit) {
     emit(AuthAuthenticated(event.user));
+  }
+
+  // Método para forzar recarga del usuario actual
+  void reloadUser() {
+    add(AuthCheckRequested());
   }
 }
