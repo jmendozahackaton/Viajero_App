@@ -1,11 +1,15 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hackaton_app/data/datasources/firebase_options.dart';
+import 'package:hackaton_app/core/widgets/dependency_test_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:hackaton_app/core/providers/app_providers.dart';
 import 'package:hackaton_app/core/network/firebase_service.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Inicializar Firebase
+  await FirebaseService.initialize();
+
   runApp(const MyApp());
 }
 
@@ -14,11 +18,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Viajero App',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const Scaffold(
-        body: Center(child: Text('Viajero App - Configuración exitosa!')),
+    return MultiProvider(
+      providers: AppProviders.providers,
+      child: MaterialApp(
+        title: 'Viajero App',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: const DependencyTestWidget(), // ← Cambiar temporalmente
       ),
     );
   }

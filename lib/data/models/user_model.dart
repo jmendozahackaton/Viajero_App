@@ -1,47 +1,128 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-  final String userId;
+  final String uid;
   final String email;
-  final String nombre;
-  final String rol;
-  final bool activo;
+  final String displayName;
+  final String userType; // 'passenger' o 'admin'
+  final String? phoneNumber;
+  final String? photoURL;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String? fcmToken;
+  final Map<String, dynamic> preferences;
 
   UserModel({
-    required this.userId,
+    required this.uid,
     required this.email,
-    required this.nombre,
-    required this.rol,
-    required this.activo,
+    required this.displayName,
+    required this.userType,
+    this.phoneNumber,
+    this.photoURL,
+    required this.createdAt,
+    required this.updatedAt,
+    this.fcmToken,
+    required this.preferences,
   });
 
-  /// Crear un objeto desde un Map (ej: documento Firestore)
-  factory UserModel.fromMap(Map<String, dynamic> map, String documentId) {
-    // Función helper para obtener valor sin importar case o existencia
-    dynamic getValue(Map<String, dynamic> data, List<String> possibleKeys) {
-      for (var key in possibleKeys) {
-        if (data.containsKey(key)) return data[key];
-      }
-      return null;
-    }
+  // Método para convertir UserModel a Map (para Firestore)
+  Map<String, dynamic> toMap() {
+    return {
+      'uid': uid,
+      'email': email,
+      'displayName': displayName,
+      'userType': userType,
+      'phoneNumber': phoneNumber,
+      'photoURL': photoURL,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
+      'fcmToken': fcmToken,
+      'preferences': preferences,
+    };
+  }
 
+  // Método para crear UserModel desde Map (desde Firestore)
+  factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      userId: documentId,
-      email: getValue(map, ['email', 'Email'])?.toString() ?? '',
-      nombre: getValue(map, ['nombre', 'Nombre'])?.toString() ?? '',
-      rol: getValue(map, ['rol', 'Rol'])?.toString() ?? 'Pasajero',
-      activo: getValue(map, ['activo', 'Activo']) as bool? ?? false,
+      uid: map['uid'] ?? '',
+      email: map['email'] ?? '',
+      displayName: map['displayName'] ?? '',
+      userType: map['userType'] ?? 'passenger',
+      phoneNumber: map['phoneNumber'],
+      photoURL: map['photoURL'],
+      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      updatedAt: (map['updatedAt'] as Timestamp).toDate(),
+      fcmToken: map['fcmToken'],
+      preferences: Map<String, dynamic>.from(map['preferences'] ?? {}),
     );
   }
 
-  /// Convertir objeto a Map (para guardar en Firestore)
-  Map<String, dynamic> toMap() {
-    return {'email': email, 'nombre': nombre, 'rol': rol, 'activo': activo};
+  // Método para crear un UserModel vacío (útil para inicialización)
+  factory UserModel.empty() {
+    return UserModel(
+      uid: '',
+      email: '',
+      displayName: '',
+      userType: 'passenger',
+      phoneNumber: null,
+      photoURL: null,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      fcmToken: null,
+      preferences: {'notifications': true, 'darkMode': false, 'language': 'es'},
+    );
   }
 
-  /// Crear objeto desde un DocumentSnapshot
-  factory UserModel.fromDocument(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return UserModel.fromMap(data, doc.id);
+  // Método para copiar el UserModel con cambios
+  UserModel copyWith({
+    String? uid,
+    String? email,
+    String? displayName,
+    String? userType,
+    String? phoneNumber,
+    String? photoURL,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? fcmToken,
+    Map<String, dynamic>? preferences,
+  }) {
+    return UserModel(
+      uid: uid ?? this.uid,
+      email: email ?? this.email,
+      displayName: displayName ?? this.displayName,
+      userType: userType ?? this.userType,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      photoURL: photoURL ?? this.photoURL,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      fcmToken: fcmToken ?? this.fcmToken,
+      preferences: preferences ?? this.preferences,
+    );
+  }
+
+  // Override del método toString para debugging
+  @override
+  String toString() {
+    return 'UserModel(uid: $uid, email: $email, displayName: $displayName, userType: $userType)';
+  }
+
+  // Override de equals y hashCode para comparaciones
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UserModel &&
+        other.uid == uid &&
+        other.email == email &&
+        other.displayName == displayName &&
+        other.userType == userType;
+  }
+
+  @override
+  int get hashCode {
+    return uid.hashCode ^
+        email.hashCode ^
+        displayName.hashCode ^
+        userType.hashCode;
   }
 }
