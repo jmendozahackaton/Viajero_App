@@ -23,6 +23,56 @@ class _TransportMapPageState extends State<TransportMapPage> {
   final Set<Polyline> _polylines = {};
   final Set<Marker> _markers = {};
 
+  BitmapDescriptor? _busIcon;
+  BitmapDescriptor? _busStopIcon;
+  BitmapDescriptor? _selectedBusIcon;
+  BitmapDescriptor? _selectedBusStopIcon;
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCustomIcons();
+  }
+
+  Future<void> _loadCustomIcons() async {
+    try {
+      // Íconos para buses
+      _busIcon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(48, 48)),
+        'assets/icons/bus.png',
+      );
+
+      _selectedBusIcon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(56, 56)),
+        'assets/icons/bus_selected.png',
+      );
+
+      // Íconos para paradas
+      _busStopIcon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(32, 32)),
+        'assets/icons/bus_stop.png',
+      );
+
+      _selectedBusStopIcon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(40, 40)),
+        'assets/icons/bus_stop_selected.png',
+      );
+    } catch (e) {
+      // Si falla la carga de íconos, usar markers por defecto
+      print('Error cargando íconos personalizados: $e');
+      _busIcon = null;
+      _selectedBusIcon = null;
+      _busStopIcon = null;
+      _selectedBusStopIcon = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,6 +161,7 @@ class _TransportMapPageState extends State<TransportMapPage> {
           color: isSelected ? Colors.blue : Colors.grey,
           width: isSelected ? 5 : 3,
           geodesic: true,
+          onTap: () => _onRouteTapped(route),
         ),
       );
     }
@@ -142,12 +193,12 @@ class _TransportMapPageState extends State<TransportMapPage> {
         Marker(
           markerId: MarkerId('stop_${stop.id}'),
           position: stop.location,
-          infoWindow: InfoWindow(title: stop.name, snippet: stop.description),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            isSelected
-                ? BitmapDescriptor.hueOrange
-                : BitmapDescriptor.hueViolet,
+          infoWindow: InfoWindow(
+            title: stop.name,
+            snippet: 'Tap para más información',
           ),
+          icon: _getBusStopIcon(isSelected),
+          onTap: () => _onBusStopTapped(stop),
         ),
       );
     }
@@ -162,19 +213,228 @@ class _TransportMapPageState extends State<TransportMapPage> {
           position: bus.currentLocation,
           infoWindow: InfoWindow(
             title: 'Bus ${bus.licensePlate}',
-            snippet: 'Conductor: ${bus.driverName}',
+            snippet: 'Tap para ver detalles',
           ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            isSelected ? BitmapDescriptor.hueRed : BitmapDescriptor.hueGreen,
-          ),
+          icon: _getBusIcon(isSelected),
+          onTap: () => _onBusTapped(bus),
         ),
       );
     }
   }
 
-  @override
-  void dispose() {
-    _mapController.dispose();
-    super.dispose();
+  BitmapDescriptor _getBusIcon(bool isSelected) {
+    if (isSelected && _selectedBusIcon != null) return _selectedBusIcon!;
+    if (_busIcon != null) return _busIcon!;
+    return BitmapDescriptor.defaultMarkerWithHue(
+      isSelected ? BitmapDescriptor.hueRed : BitmapDescriptor.hueGreen,
+    );
+  }
+
+  BitmapDescriptor _getBusStopIcon(bool isSelected) {
+    if (isSelected && _selectedBusStopIcon != null)
+      return _selectedBusStopIcon!;
+    if (_busStopIcon != null) return _busStopIcon!;
+    return BitmapDescriptor.defaultMarkerWithHue(
+      isSelected ? BitmapDescriptor.hueOrange : BitmapDescriptor.hueViolet,
+    );
+  }
+
+  void _onBusTapped(BusEntity bus) {
+    final bloc = context.read<TransportBloc>();
+    bloc.add(TransportBusSelected(bus.id));
+
+    // Mostrar modal con info del bus
+    _showBusInfoModal(bus);
+  }
+
+  void _onBusStopTapped(BusStopEntity busStop) {
+    final bloc = context.read<TransportBloc>();
+    bloc.add(TransportBusStopSelected(busStop.id));
+
+    // Mostrar modal con info de la parada
+    _showBusStopInfoModal(busStop);
+  }
+
+  void _onRouteTapped(RouteEntity route) {
+    final bloc = context.read<TransportBloc>();
+    bloc.add(TransportRouteSelected(route.id));
+
+    // Mostrar modal con info de la ruta
+    _showRouteInfoModal(route);
+  }
+
+  void _showBusInfoModal(BusEntity bus) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Bus ${bus.licensePlate}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _buildInfoRow('Conductor:', bus.driverName),
+              _buildInfoRow('Ruta:', bus.routeId),
+              _buildInfoRow(
+                'Capacidad:',
+                '${bus.occupancy}/${bus.capacity} pasajeros',
+              ),
+              _buildInfoRow('Velocidad:', '${bus.currentSpeed} km/h'),
+              _buildInfoRow('Llegada estimada:', '${bus.estimatedArrival} min'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: Implementar seguimiento de bus
+                  Navigator.pop(context);
+                },
+                child: const Text('Seguir este bus'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showBusStopInfoModal(BusStopEntity busStop) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                busStop.name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                busStop.description,
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 16),
+              _buildInfoRow('Dirección:', busStop.address),
+              _buildInfoRow(
+                'Rutas que pasan:',
+                '${busStop.routeIds.length} rutas',
+              ),
+              _buildInfoRow('Techo:', busStop.hasShelter ? 'Sí' : 'No'),
+              _buildInfoRow('Asientos:', busStop.hasSeating ? 'Sí' : 'No'),
+              _buildInfoRow('Iluminación:', busStop.hasLighting ? 'Sí' : 'No'),
+              _buildInfoRow('Accesible:', busStop.isAccessible ? 'Sí' : 'No'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: Implementar ver rutas de esta parada
+                  Navigator.pop(context);
+                },
+                child: const Text('Ver rutas disponibles'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showRouteInfoModal(RouteEntity route) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Ruta ${route.name}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                route.description,
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 16),
+              _buildInfoRow('Origen:', route.origin),
+              _buildInfoRow('Destino:', route.destination),
+              _buildInfoRow('Distancia:', '${route.distance} km'),
+              _buildInfoRow('Tiempo estimado:', '${route.estimatedTime} min'),
+              _buildInfoRow('Tarifa:', 'C\$${route.fare}'),
+              _buildInfoRow('Paradas:', '${route.busStopIds.length} paradas'),
+              _buildInfoRow('Estado:', route.isActive ? 'Activa' : 'Inactiva'),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // TODO: Implementar ver paradas de esta ruta
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Ver paradas'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // TODO: Implementar ver buses en esta ruta
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
+                      child: const Text(
+                        'Ver buses',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: Text(value)),
+        ],
+      ),
+    );
   }
 }

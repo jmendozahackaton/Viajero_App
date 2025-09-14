@@ -56,3 +56,9 @@ final class TransportError extends TransportState {
 
   TransportError(this.message);
 }
+
+final class TransportMapLoading extends TransportState {
+  final String loadingMessage;
+
+  TransportMapLoading(this.loadingMessage);
+}
