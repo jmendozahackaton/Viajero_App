@@ -1,9 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hackaton_app/data/repositories/user_repository_impl.dart';
-import 'package:hackaton_app/data/models/user_model.dart';
 import '/Users/dev/Flutter/hackaton_app/test/helpers/mocks.dart';
 
 void main() {

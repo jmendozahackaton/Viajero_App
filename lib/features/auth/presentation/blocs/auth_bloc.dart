@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:hackaton_app/domain/repositories/auth_repository.dart';
 import 'package:hackaton_app/domain/repositories/user_repository.dart';
 import 'package:hackaton_app/domain/entities/user_entity.dart';

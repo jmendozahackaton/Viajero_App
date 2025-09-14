@@ -40,3 +40,21 @@ final class TransportBusStopSelected extends TransportEvent {
 }
 
 final class TransportUserLocationRequested extends TransportEvent {}
+
+final class TransportRoutesUpdated extends TransportEvent {
+  final List<RouteEntity> routes;
+
+  TransportRoutesUpdated(this.routes);
+}
+
+final class TransportBusesUpdated extends TransportEvent {
+  final List<BusEntity> buses;
+
+  TransportBusesUpdated(this.buses);
+}
+
+final class TransportBusStopsUpdated extends TransportEvent {
+  final List<BusStopEntity> busStops;
+
+  TransportBusStopsUpdated(this.busStops);
+}

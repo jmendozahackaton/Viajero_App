@@ -30,6 +30,9 @@ abstract class TransportRepository {
   /// Stream de buses activos (para seguimiento en tiempo real)
   Stream<List<BusEntity>> streamActiveBuses();
 
+  /// Stream de Paradas Activas
+  Stream<List<BusStopEntity>> streamActiveBusStops();
+
   /// Stream de ubicación de un bus específico
   Stream<BusEntity> streamBusLocation(String busId);
 

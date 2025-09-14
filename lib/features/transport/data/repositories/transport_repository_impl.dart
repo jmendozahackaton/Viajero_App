@@ -149,21 +149,26 @@ class TransportRepositoryImpl implements TransportRepository {
   }
 
   // ========== MÉTODOS DE UTILIDAD ==========
+  // Mejorar el método _parseCoordinates
   List<LatLng> _parseCoordinates(dynamic coordinates) {
     if (coordinates is List) {
-      return coordinates.map((coord) {
-        if (coord is Map<String, dynamic>) {
-          return LatLng(coord['latitude'] ?? 0.0, coord['longitude'] ?? 0.0);
-        }
-        return const LatLng(0, 0);
+      return coordinates.whereType<Map<String, dynamic>>().map((coord) {
+        return LatLng(
+          (coord['latitude'] ?? 0.0).toDouble(),
+          (coord['longitude'] ?? 0.0).toDouble(),
+        );
       }).toList();
     }
     return [];
   }
 
+  // Mejorar el método _parseLatLng
   LatLng _parseLatLng(dynamic location) {
     if (location is Map<String, dynamic>) {
-      return LatLng(location['latitude'] ?? 0.0, location['longitude'] ?? 0.0);
+      return LatLng(
+        (location['latitude'] ?? 0.0).toDouble(),
+        (location['longitude'] ?? 0.0).toDouble(),
+      );
     }
     return const LatLng(0, 0);
   }
@@ -193,17 +198,54 @@ class TransportRepositoryImpl implements TransportRepository {
   // ... Implementar otros métodos con throw UnimplementedError() temporalmente
   @override
   Stream<List<RouteEntity>> streamActiveBusRoutes() {
-    throw UnimplementedError();
+    return _routesCollection
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+          return await Future.wait(
+            snapshot.docs.map((doc) async {
+              return _mapToRouteEntity(doc.data(), doc.id);
+            }),
+          );
+        });
   }
 
   @override
   Stream<List<BusEntity>> streamActiveBuses() {
-    throw UnimplementedError();
+    return _busesCollection
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+          return await Future.wait(
+            snapshot.docs.map((doc) async {
+              return _mapToBusEntity(doc.data(), doc.id);
+            }),
+          );
+        });
+  }
+
+  @override
+  Stream<List<BusStopEntity>> streamActiveBusStops() {
+    return _busStopsCollection
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+          return await Future.wait(
+            snapshot.docs.map((doc) async {
+              return _mapToBusStopEntity(doc.data(), doc.id);
+            }),
+          );
+        });
   }
 
   @override
   Stream<BusEntity> streamBusLocation(String busId) {
-    throw UnimplementedError();
+    return _busesCollection.doc(busId).snapshots().asyncMap((snapshot) async {
+      if (!snapshot.exists) {
+        throw Exception('Bus no encontrado');
+      }
+      return _mapToBusEntity(snapshot.data()!, snapshot.id);
+    });
   }
 
   @override

@@ -1,0 +1,137 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class MockTransportData {
+  final FirebaseFirestore _firestore;
+
+  MockTransportData(this._firestore);
+
+  Future<void> createMockData() async {
+    await _createMockRoutes();
+    await _createMockBusStops();
+    await _createMockBuses();
+  }
+
+  Future<void> _createMockRoutes() async {
+    final routesCollection = _firestore.collection('bus_routes');
+
+    // Ruta 101: Ciudad Sandino - Mercado Oriental
+    await routesCollection.doc('route_101').set({
+      'name': 'Ruta 101',
+      'description': 'Ciudad Sandino - Mercado Oriental',
+      'origin': 'Ciudad Sandino',
+      'destination': 'Mercado Oriental',
+      'coordinates': [
+        {'latitude': 12.158, 'longitude': -86.348}, // Ciudad Sandino
+        {'latitude': 12.143, 'longitude': -86.318},
+        {'latitude': 12.136, 'longitude': -86.291},
+        {'latitude': 12.126, 'longitude': -86.268}, // UCA
+        {'latitude': 12.120, 'longitude': -86.250},
+        {'latitude': 12.115, 'longitude': -86.235}, // Mercado Oriental
+      ],
+      'busStopIds': ['stop_uca', 'stop_metrocentro', 'stop_mercado_oriental'],
+      'estimatedTime': 45,
+      'distance': 18.5,
+      'fare': 10.0,
+      'isActive': true,
+    });
+
+    // Ruta 118: Villa Libertad - Mercado Israel
+    await routesCollection.doc('route_118').set({
+      'name': 'Ruta 118',
+      'description': 'Villa Libertad - Mercado Israel',
+      'origin': 'Villa Libertad',
+      'destination': 'Mercado Israel',
+      'coordinates': [
+        {'latitude': 12.165, 'longitude': -86.325}, // Villa Libertad
+        {'latitude': 12.152, 'longitude': -86.305},
+        {'latitude': 12.142, 'longitude': -86.285},
+        {'latitude': 12.135, 'longitude': -86.270}, // Metrocentro
+        {'latitude': 12.128, 'longitude': -86.255},
+        {'latitude': 12.122, 'longitude': -86.240}, // Mercado Israel
+      ],
+      'busStopIds': ['stop_metrocentro', 'stop_mercado_israel'],
+      'estimatedTime': 35,
+      'distance': 15.2,
+      'fare': 8.0,
+      'isActive': true,
+    });
+  }
+
+  Future<void> _createMockBusStops() async {
+    final stopsCollection = _firestore.collection('bus_stops');
+
+    // Parada UCA
+    await stopsCollection.doc('stop_uca').set({
+      'name': 'UCA',
+      'description': 'Universidad Centroamericana',
+      'address': 'Universidad Centroamericana, Managua',
+      'location': {'latitude': 12.126, 'longitude': -86.268},
+      'routeIds': ['route_101', 'route_118'],
+      'hasShelter': true,
+      'hasSeating': true,
+      'hasLighting': true,
+      'isAccessible': true,
+      'isActive': true,
+    });
+
+    // Parada Metrocentro
+    await stopsCollection.doc('stop_metrocentro').set({
+      'name': 'Metrocentro',
+      'description': 'Centro Comercial Metrocentro',
+      'address': 'Metrocentro, Managua',
+      'location': {'latitude': 12.135, 'longitude': -86.270},
+      'routeIds': ['route_101', 'route_118'],
+      'hasShelter': true,
+      'hasSeating': true,
+      'hasLighting': true,
+      'isAccessible': true,
+      'isActive': true,
+    });
+
+    // Parada Mercado Oriental
+    await stopsCollection.doc('stop_mercado_oriental').set({
+      'name': 'Mercado Oriental',
+      'description': 'Mercado Oriental de Managua',
+      'address': 'Mercado Oriental, Managua',
+      'location': {'latitude': 12.115, 'longitude': -86.235},
+      'routeIds': ['route_101'],
+      'hasShelter': false,
+      'hasSeating': false,
+      'hasLighting': false,
+      'isAccessible': false,
+      'isActive': true,
+    });
+  }
+
+  Future<void> _createMockBuses() async {
+    final busesCollection = _firestore.collection('buses');
+
+    // Bus en Ruta 101
+    await busesCollection.doc('bus_101_001').set({
+      'routeId': 'route_101',
+      'licensePlate': 'M-101-ABC',
+      'driverName': 'Carlos Rodríguez',
+      'capacity': 50,
+      'currentLocation': {'latitude': 12.136, 'longitude': -86.291},
+      'lastUpdate': FieldValue.serverTimestamp(),
+      'currentSpeed': 40,
+      'occupancy': 28,
+      'estimatedArrival': 8,
+      'isActive': true,
+    });
+
+    // Bus en Ruta 118
+    await busesCollection.doc('bus_118_001').set({
+      'routeId': 'route_118',
+      'licensePlate': 'M-118-XYZ',
+      'driverName': 'María González',
+      'capacity': 45,
+      'currentLocation': {'latitude': 12.145, 'longitude': -86.295},
+      'lastUpdate': FieldValue.serverTimestamp(),
+      'currentSpeed': 35,
+      'occupancy': 22,
+      'estimatedArrival': 12,
+      'isActive': true,
+    });
+  }
+}

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
@@ -11,6 +13,9 @@ part 'transport_state.dart';
 
 class TransportBloc extends Bloc<TransportEvent, TransportState> {
   final TransportRepository transportRepository;
+  StreamSubscription<List<RouteEntity>>? _routesSubscription;
+  StreamSubscription<List<BusEntity>>? _busesSubscription;
+  StreamSubscription<List<BusStopEntity>>? _busStopsSubscription;
 
   TransportBloc({required this.transportRepository})
     : super(TransportInitial()) {
@@ -23,6 +28,87 @@ class TransportBloc extends Bloc<TransportEvent, TransportState> {
     on<TransportBusSelected>(_onBusSelected);
     on<TransportBusStopSelected>(_onBusStopSelected);
     on<TransportUserLocationRequested>(_onUserLocationRequested);
+
+    on<TransportRoutesUpdated>(_onRoutesUpdated);
+    on<TransportBusesUpdated>(_onBusesUpdated);
+    on<TransportBusStopsUpdated>(_onBusStopsUpdated);
+
+    _startStreamSubscriptions();
+  }
+
+  @override
+  Future<void> close() {
+    _routesSubscription?.cancel();
+    _busesSubscription?.cancel();
+    _busStopsSubscription?.cancel();
+    return super.close();
+  }
+
+  void _startStreamSubscriptions() {
+    // Suscribirse a rutas activas
+    _routesSubscription = transportRepository.streamActiveBusRoutes().listen(
+      (routes) {
+        if (state is TransportMapLoadedState) {
+          add(TransportRoutesUpdated(routes));
+        }
+      },
+      onError: (error) {
+        // Manejar errores de stream
+      },
+    );
+
+    // Suscribirse a buses activos
+    _busesSubscription = transportRepository.streamActiveBuses().listen(
+      (buses) {
+        if (state is TransportMapLoadedState) {
+          add(TransportBusesUpdated(buses));
+        }
+      },
+      onError: (error) {
+        // Manejar errores de stream
+      },
+    );
+
+    // Suscribirse a paradas activas
+    _busStopsSubscription = transportRepository.streamActiveBusStops().listen(
+      (busStops) {
+        if (state is TransportMapLoadedState) {
+          add(TransportBusStopsUpdated(busStops));
+        }
+      },
+      onError: (error) {
+        // Manejar errores de stream
+      },
+    );
+  }
+
+  void _onRoutesUpdated(
+    TransportRoutesUpdated event,
+    Emitter<TransportState> emit,
+  ) {
+    if (state is TransportMapLoadedState) {
+      emit((state as TransportMapLoadedState).copyWith(routes: event.routes));
+    }
+  }
+
+  void _onBusesUpdated(
+    TransportBusesUpdated event,
+    Emitter<TransportState> emit,
+  ) {
+    if (state is TransportMapLoadedState) {
+      emit((state as TransportMapLoadedState).copyWith(buses: event.buses));
+    }
+  }
+
+  void _onBusStopsUpdated(
+    TransportBusStopsUpdated event,
+    Emitter<TransportState> emit,
+  ) {
+    if (state is TransportMapLoadedState) {
+      emit(
+        (state as TransportMapLoadedState).copyWith(busStops: event.busStops),
+      );
+    }
   }
 
   void _onMapLoaded(TransportMapLoaded event, Emitter<TransportState> emit) {
