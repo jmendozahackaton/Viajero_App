@@ -103,7 +103,7 @@ class HomePage extends StatelessWidget {
                             title: 'Mapa de Rutas',
                             color: Colors.blue,
                             onTap: () {
-                              GoRouter.of(context).go('/map');
+                              GoRouter.of(context).go('/transport-map');
                             },
                           ),
                           _buildFeatureCard(

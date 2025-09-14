@@ -4,7 +4,7 @@ import 'package:hackaton_app/features/auth/presentation/pages/splash_page.dart';
 import 'package:hackaton_app/features/auth/presentation/pages/login_page.dart';
 import 'package:hackaton_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:hackaton_app/features/home/presentation/pages/home_page.dart';
-import 'package:hackaton_app/features/map/presentation/pages/map_page.dart';
+import 'package:hackaton_app/features/transport/presentation/pages/transport_map_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -26,9 +26,9 @@ class AppRouter {
         builder: (context, state) => const SignUpPage(),
       ),
       GoRoute(
-        path: '/map',
-        name: 'map',
-        builder: (context, state) => const MapPage(),
+        path: '/transport-map',
+        name: 'transport-map',
+        builder: (context, state) => const TransportMapPage(),
       ),
       GoRoute(
         path: '/home',

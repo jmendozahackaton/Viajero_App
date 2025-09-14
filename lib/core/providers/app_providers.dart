@@ -14,6 +14,9 @@ import 'package:hackaton_app/domain/usecases/update_user_usecase.dart';
 import 'package:hackaton_app/domain/usecases/stream_user_usecase.dart';
 import 'package:hackaton_app/domain/repositories/auth_repository.dart';
 import 'package:hackaton_app/data/repositories/auth_repository_impl.dart';
+import 'package:hackaton_app/features/transport/domain/repositories/transport_repository.dart';
+import 'package:hackaton_app/features/transport/data/repositories/transport_repository_impl.dart';
+import 'package:hackaton_app/features/transport/presentation/bloc/transport_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppProviders {
@@ -71,6 +74,15 @@ class AppProviders {
         userRepository: context
             .read<UserRepository>(), // ← Agregar UserRepository
       )..add(AuthCheckRequested()),
+    ),
+    Provider<TransportRepository>(
+      create: (context) =>
+          TransportRepositoryImpl(firestore: context.read<FirebaseFirestore>()),
+    ),
+    BlocProvider<TransportBloc>(
+      create: (context) => TransportBloc(
+        transportRepository: context.read<TransportRepository>(),
+      ),
     ),
   ];
 }
