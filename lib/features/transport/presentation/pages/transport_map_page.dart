@@ -42,29 +42,28 @@ class _TransportMapPageState extends State<TransportMapPage> {
 
   Future<void> _loadCustomIcons() async {
     try {
-      // Íconos para buses
+      // Íconos para buses - tamaño ajustado
       _busIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)),
+        const ImageConfiguration(size: Size(100, 100)), // ← Tamaño reducido
         'assets/icons/bus.png',
       );
 
       _selectedBusIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(56, 56)),
+        const ImageConfiguration(size: Size(100, 100)), // ← Tamaño reducido
         'assets/icons/bus_selected.png',
       );
 
-      // Íconos para paradas
+      // Íconos para paradas - tamaño ajustado
       _busStopIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(32, 32)),
+        const ImageConfiguration(size: Size(100, 100)), // ← Tamaño reducido
         'assets/icons/bus_stop.png',
       );
 
       _selectedBusStopIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(40, 40)),
+        const ImageConfiguration(size: Size(100, 100)), // ← Tamaño reducido
         'assets/icons/bus_stop_selected.png',
       );
     } catch (e) {
-      // Si falla la carga de íconos, usar markers por defecto
       print('Error cargando íconos personalizados: $e');
       _busIcon = null;
       _selectedBusIcon = null;
@@ -225,6 +224,8 @@ class _TransportMapPageState extends State<TransportMapPage> {
   BitmapDescriptor _getBusIcon(bool isSelected) {
     if (isSelected && _selectedBusIcon != null) return _selectedBusIcon!;
     if (_busIcon != null) return _busIcon!;
+
+    // Fallback a markers de Google con colores temáticos
     return BitmapDescriptor.defaultMarkerWithHue(
       isSelected ? BitmapDescriptor.hueRed : BitmapDescriptor.hueGreen,
     );
@@ -234,6 +235,8 @@ class _TransportMapPageState extends State<TransportMapPage> {
     if (isSelected && _selectedBusStopIcon != null)
       return _selectedBusStopIcon!;
     if (_busStopIcon != null) return _busStopIcon!;
+
+    // Fallback a markers de Google con colores temáticos
     return BitmapDescriptor.defaultMarkerWithHue(
       isSelected ? BitmapDescriptor.hueOrange : BitmapDescriptor.hueViolet,
     );

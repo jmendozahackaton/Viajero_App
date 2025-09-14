@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hackaton_app/features/transport/data/mock_data/mock_transport_data.dart';
 import 'package:provider/provider.dart';
 import 'package:hackaton_app/core/providers/app_providers.dart';
 import 'package:hackaton_app/core/network/firebase_service.dart';
@@ -9,6 +11,19 @@ void main() async {
 
   // Inicializar Firebase
   await FirebaseService.initialize();
+
+  // ✅ TEMPORAL: Crear datos de prueba solo en desarrollo
+  const bool isDevelopment = true; // Cambiar a false en producción
+  if (isDevelopment) {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final mockData = MockDataService(firestore);
+      await mockData.createMockTransportData();
+      print('✅ Datos de prueba creados exitosamente');
+    } catch (e) {
+      print('⚠️ Error creando datos de prueba: $e');
+    }
+  }
 
   runApp(const MyApp());
 }
