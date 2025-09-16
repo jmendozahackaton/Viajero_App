@@ -16,6 +16,9 @@ final class TransportMapLoadedState extends TransportState {
   final String? selectedRouteId;
   final String? selectedBusId;
   final String? selectedBusStopId;
+  final LatLng? userLocation; // ← NUEVO: Ubicación real del usuario
+  final bool hasLocationPermission; // ← NUEVO: Estado de permisos
+  final List<BusStopEntity> nearbyBusStops; // ← NUEVO: Paradas cercanas
 
   TransportMapLoadedState({
     required this.initialPosition,
@@ -26,6 +29,9 @@ final class TransportMapLoadedState extends TransportState {
     this.selectedRouteId,
     this.selectedBusId,
     this.selectedBusStopId,
+    this.userLocation, // ← Inicializar en constructor
+    this.hasLocationPermission = false, // ← Valor por defecto
+    this.nearbyBusStops = const [], // ← Inicializar vacío
   });
 
   TransportMapLoadedState copyWith({
@@ -37,6 +43,9 @@ final class TransportMapLoadedState extends TransportState {
     String? selectedRouteId,
     String? selectedBusId,
     String? selectedBusStopId,
+    LatLng? userLocation, // ← NUEVO
+    bool? hasLocationPermission, // ← NUEVO
+    List<BusStopEntity>? nearbyBusStops, // ← NUEVO
   }) {
     return TransportMapLoadedState(
       initialPosition: initialPosition ?? this.initialPosition,
@@ -47,6 +56,10 @@ final class TransportMapLoadedState extends TransportState {
       selectedRouteId: selectedRouteId ?? this.selectedRouteId,
       selectedBusId: selectedBusId ?? this.selectedBusId,
       selectedBusStopId: selectedBusStopId ?? this.selectedBusStopId,
+      userLocation: userLocation ?? this.userLocation, // ← NUEVO
+      hasLocationPermission:
+          hasLocationPermission ?? this.hasLocationPermission, // ← NUEVO
+      nearbyBusStops: nearbyBusStops ?? this.nearbyBusStops, // ← NUEVO
     );
   }
 }

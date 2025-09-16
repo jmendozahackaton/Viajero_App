@@ -32,6 +32,9 @@ class TransportBloc extends Bloc<TransportEvent, TransportState> {
     on<TransportRoutesUpdated>(_onRoutesUpdated);
     on<TransportBusesUpdated>(_onBusesUpdated);
     on<TransportBusStopsUpdated>(_onBusStopsUpdated);
+    on<TransportLocationPermissionRequested>(_onLocationPermissionRequested);
+    on<TransportNearbyBusStopsRequested>(_onNearbyBusStopsRequested);
+    on<TransportUserLocationUpdated>(_onUserLocationUpdated);
 
     _startStreamSubscriptions();
   }
@@ -224,15 +227,106 @@ class TransportBloc extends Bloc<TransportEvent, TransportState> {
   ) async {
     if (state is TransportMapLoadedState) {
       try {
-        final location = await transportRepository.getCurrentUserLocation();
-        emit(
-          (state as TransportMapLoadedState).copyWith(
-            currentLocation: location,
-          ),
-        );
+        final currentState = state as TransportMapLoadedState;
+
+        // Si ya tenemos permisos, obtener ubicación directamente
+        if (currentState.hasLocationPermission) {
+          final location = await transportRepository.getCurrentUserLocation();
+          emit(
+            currentState.copyWith(
+              userLocation: location,
+              currentLocation: location,
+            ),
+          );
+
+          // Buscar paradas cercanas
+          add(
+            TransportNearbyBusStopsRequested(
+              userLocation: location,
+              radiusKm: 1.0,
+            ),
+          );
+        } else {
+          // Si no tenemos permisos, solicitarlos
+          add(TransportLocationPermissionRequested());
+        }
       } catch (e) {
         emit(TransportError('Error obteniendo ubicación: $e'));
       }
+    }
+  }
+
+  Future<void> _onLocationPermissionRequested(
+    TransportLocationPermissionRequested event,
+    Emitter<TransportState> emit,
+  ) async {
+    if (state is TransportMapLoadedState) {
+      try {
+        final currentState = state as TransportMapLoadedState;
+
+        // Intentar obtener la ubicación (esto solicitará permisos)
+        final userLocation = await transportRepository.getCurrentUserLocation();
+
+        emit(
+          currentState.copyWith(
+            userLocation: userLocation,
+            hasLocationPermission: true,
+            currentLocation:
+                userLocation, // Mover cámara a la ubicación del usuario
+          ),
+        );
+
+        // Buscar paradas cercanas automáticamente
+        add(
+          TransportNearbyBusStopsRequested(
+            userLocation: userLocation,
+            radiusKm: 1.0,
+          ),
+        );
+      } catch (e) {
+        // Si falla, actualizar estado para indicar permisos denegados
+        emit(
+          (state as TransportMapLoadedState).copyWith(
+            hasLocationPermission: false,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _onNearbyBusStopsRequested(
+    TransportNearbyBusStopsRequested event,
+    Emitter<TransportState> emit,
+  ) async {
+    if (state is TransportMapLoadedState) {
+      try {
+        final nearbyStops = await transportRepository.findNearbyBusStops(
+          event.userLocation,
+          event.radiusKm,
+        );
+
+        emit(
+          (state as TransportMapLoadedState).copyWith(
+            nearbyBusStops: nearbyStops,
+          ),
+        );
+      } catch (e) {
+        // No emitir error, solo loggear
+        print('Error buscando paradas cercanas: $e');
+      }
+    }
+  }
+
+  void _onUserLocationUpdated(
+    TransportUserLocationUpdated event,
+    Emitter<TransportState> emit,
+  ) {
+    if (state is TransportMapLoadedState) {
+      emit(
+        (state as TransportMapLoadedState).copyWith(
+          userLocation: event.userLocation,
+        ),
+      );
     }
   }
 }

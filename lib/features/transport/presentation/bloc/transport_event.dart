@@ -58,3 +58,21 @@ final class TransportBusStopsUpdated extends TransportEvent {
 
   TransportBusStopsUpdated(this.busStops);
 }
+
+final class TransportLocationPermissionRequested extends TransportEvent {}
+
+final class TransportNearbyBusStopsRequested extends TransportEvent {
+  final LatLng userLocation;
+  final double radiusKm;
+
+  TransportNearbyBusStopsRequested({
+    required this.userLocation,
+    this.radiusKm = 1.0,
+  });
+}
+
+final class TransportUserLocationUpdated extends TransportEvent {
+  final LatLng userLocation;
+
+  TransportUserLocationUpdated(this.userLocation);
+}

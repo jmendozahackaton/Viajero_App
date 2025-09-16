@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hackaton_app/features/transport/domain/repositories/transport_repository.dart';
 import '../bloc/transport_bloc.dart';
@@ -22,11 +23,16 @@ class _TransportMapPageState extends State<TransportMapPage> {
   ); // Managua
   final Set<Polyline> _polylines = {};
   final Set<Marker> _markers = {};
+  final Map<String, Marker> _animatedMarkers = {};
+  final Map<String, LatLng> _busTargetPositions = {};
+  LatLng? _userLocation;
+  bool _isLocating = false;
 
   BitmapDescriptor? _busIcon;
   BitmapDescriptor? _busStopIcon;
   BitmapDescriptor? _selectedBusIcon;
   BitmapDescriptor? _selectedBusStopIcon;
+  BitmapDescriptor? _userLocationIcon;
 
   @override
   void dispose() {
@@ -38,6 +44,7 @@ class _TransportMapPageState extends State<TransportMapPage> {
   void initState() {
     super.initState();
     _loadCustomIcons();
+    _requestLocationPermissions();
   }
 
   Future<void> _loadCustomIcons() async {
@@ -63,12 +70,48 @@ class _TransportMapPageState extends State<TransportMapPage> {
         const ImageConfiguration(size: Size(100, 100)), // ← Tamaño reducido
         'assets/icons/bus_stop_selected.png',
       );
+
+      // Ícono para ubicación del usuario
+      _userLocationIcon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(40, 40)),
+        'assets/icons/user_location.png', // Puedes crear este asset
+      );
     } catch (e) {
       print('Error cargando íconos personalizados: $e');
       _busIcon = null;
       _selectedBusIcon = null;
       _busStopIcon = null;
       _selectedBusStopIcon = null;
+    }
+  }
+
+  Future<void> _requestLocationPermissions() async {
+    // Esperar a que el mapa se cargue
+    await Future.delayed(const Duration(seconds: 2));
+
+    final bloc = context.read<TransportBloc>();
+    bloc.add(TransportLocationPermissionRequested());
+  }
+
+  Future<void> _getUserLocation() async {
+    setState(() => _isLocating = true);
+
+    try {
+      final transportRepository = context.read<TransportRepository>();
+      final location = await transportRepository.getCurrentUserLocation();
+
+      setState(() {
+        _userLocation = location;
+        _isLocating = false;
+      });
+
+      // Mover cámara a la ubicación del usuario
+      _mapController.animateCamera(CameraUpdate.newLatLngZoom(location, 15));
+    } catch (e) {
+      setState(() => _isLocating = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error obteniendo ubicación: $e')));
     }
   }
 
@@ -80,21 +123,20 @@ class _TransportMapPageState extends State<TransportMapPage> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.my_location),
-            onPressed: () {
-              context.read<TransportBloc>().add(
-                TransportUserLocationRequested(),
-              );
-            },
-            tooltip: 'Mi ubicación',
-          ),
+          // Mantener solo el botón de actualización en AppBar
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
               context.read<TransportBloc>().add(TransportRoutesRequested());
               context.read<TransportBloc>().add(TransportBusesRequested());
               context.read<TransportBloc>().add(TransportBusStopsRequested());
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Datos actualizados'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
             },
             tooltip: 'Actualizar',
           ),
@@ -102,8 +144,7 @@ class _TransportMapPageState extends State<TransportMapPage> {
       ),
       body: BlocProvider(
         create: (context) => TransportBloc(
-          transportRepository: context
-              .read<TransportRepository>(), // ← Tipo especificado
+          transportRepository: context.read<TransportRepository>(),
         )..add(TransportMapLoaded(_initialPosition)),
         child: BlocConsumer<TransportBloc, TransportState>(
           listener: (context, state) {
@@ -121,14 +162,66 @@ class _TransportMapPageState extends State<TransportMapPage> {
                 _mapController = controller;
               },
               myLocationEnabled: true,
-              myLocationButtonEnabled: true,
+              myLocationButtonEnabled:
+                  false, // Desactivar el botón nativo de Google Maps
               polylines: _polylines,
               markers: _markers,
             );
           },
         ),
       ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // Botón para paradas cercanas (nueva funcionalidad)
+          FloatingActionButton(
+            onPressed: _findNearbyStops,
+            child: const Icon(Icons.near_me),
+            tooltip: 'Paradas cercanas',
+            backgroundColor: Colors.green, // Color distintivo
+          ),
+          const SizedBox(height: 16),
+          // Botón para mi ubicación (única ubicación ahora)
+          FloatingActionButton(
+            onPressed: _getUserLocation,
+            child: _isLocating
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
+                : const Icon(Icons.my_location),
+            tooltip: 'Mi ubicación',
+            backgroundColor: Colors.blue, // Color coherente con la app
+          ),
+        ],
+      ),
     );
+  }
+
+  void _findNearbyStops() async {
+    if (_userLocation == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Primero obtén tu ubicación')),
+      );
+      return;
+    }
+
+    setState(() => _isLocating = true);
+
+    try {
+      final transportRepository = context.read<TransportRepository>();
+      final nearbyStops = await transportRepository.findNearbyBusStops(
+        _userLocation!,
+        1.0,
+      ); // 1km radio
+
+      _showNearbyStopsModal(nearbyStops);
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error buscando paradas: $e')));
+    } finally {
+      setState(() => _isLocating = false);
+    }
   }
 
   void _updateMapData(TransportMapLoadedState state) {
@@ -139,10 +232,20 @@ class _TransportMapPageState extends State<TransportMapPage> {
       state.selectedBusId,
       state.selectedBusStopId,
     );
+    _updateUserMarker();
+  }
 
-    if (state.currentLocation != null) {
-      _mapController.animateCamera(
-        CameraUpdate.newLatLng(state.currentLocation!),
+  void _updateUserMarker() {
+    if (_userLocation != null) {
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('user_location'),
+          position: _userLocation!,
+          icon:
+              _userLocationIcon ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          infoWindow: const InfoWindow(title: 'Tu ubicación'),
+        ),
       );
     }
   }
@@ -219,6 +322,8 @@ class _TransportMapPageState extends State<TransportMapPage> {
         ),
       );
     }
+
+    _updateBusMarkers(buses, selectedBusId);
   }
 
   BitmapDescriptor _getBusIcon(bool isSelected) {
@@ -240,6 +345,40 @@ class _TransportMapPageState extends State<TransportMapPage> {
     return BitmapDescriptor.defaultMarkerWithHue(
       isSelected ? BitmapDescriptor.hueOrange : BitmapDescriptor.hueViolet,
     );
+  }
+
+  void _updateBusMarkers(List<BusEntity> buses, String? selectedBusId) {
+    for (final bus in buses) {
+      final isSelected = bus.id == selectedBusId;
+
+      // Animación suave hacia nueva posición
+      _animateBusMovement(bus, isSelected);
+    }
+  }
+
+  void _animateBusMovement(BusEntity bus, bool isSelected) {
+    final markerId = 'bus_${bus.id}';
+    final targetPosition = bus.currentLocation;
+
+    // Si es una posición nueva, animar
+    if (_busTargetPositions[markerId] != targetPosition) {
+      _busTargetPositions[markerId] = targetPosition;
+
+      // Podríamos agregar animación aquí más adelante
+      _animatedMarkers[markerId] = Marker(
+        markerId: MarkerId(markerId),
+        position: targetPosition,
+        infoWindow: InfoWindow(
+          title: 'Bus ${bus.licensePlate}',
+          snippet:
+              'Conductor: ${bus.driverName}\nVelocidad: ${bus.currentSpeed} km/h',
+        ),
+        icon: _getBusIcon(isSelected),
+        onTap: () => _onBusTapped(bus),
+      );
+    }
+
+    _markers.add(_animatedMarkers[markerId]!);
   }
 
   void _onBusTapped(BusEntity bus) {
@@ -276,35 +415,81 @@ class _TransportMapPageState extends State<TransportMapPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Bus ${bus.licensePlate}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildInfoRow('Conductor:', bus.driverName),
-              _buildInfoRow('Ruta:', bus.routeId),
-              _buildInfoRow(
-                'Capacidad:',
-                '${bus.occupancy}/${bus.capacity} pasajeros',
-              ),
+              // ... información existente
+
+              // Agregar información de movimiento
               _buildInfoRow('Velocidad:', '${bus.currentSpeed} km/h'),
-              _buildInfoRow('Llegada estimada:', '${bus.estimatedArrival} min'),
+              _buildInfoRow(
+                'Última actualización:',
+                _formatLastUpdate(bus.lastUpdate),
+              ),
+              _buildInfoRow(
+                'Próxima parada:',
+                'En ${bus.estimatedArrival} min',
+              ),
+
+              // Botones de acción
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // TODO: Implementar seguimiento de bus
-                  Navigator.pop(context);
-                },
-                child: const Text('Seguir este bus'),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _startBusTracking(bus);
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Seguir este bus'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _showBusRoute(bus.routeId);
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
+                      child: const Text(
+                        'Ver ruta',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         );
       },
     );
+  }
+
+  String _formatLastUpdate(DateTime lastUpdate) {
+    final difference = DateTime.now().difference(lastUpdate);
+    if (difference.inSeconds < 60)
+      return 'Hace ${difference.inSeconds} segundos';
+    if (difference.inMinutes < 60)
+      return 'Hace ${difference.inMinutes} minutos';
+    return 'Hace ${difference.inHours} horas';
+  }
+
+  void _startBusTracking(BusEntity bus) {
+    // Centrar mapa en el bus y seguir su movimiento
+    _mapController.animateCamera(CameraUpdate.newLatLng(bus.currentLocation));
+
+    // Podríamos agregar más funcionalidades de seguimiento aquí
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Siguiendo bus ${bus.licensePlate}')),
+    );
+  }
+
+  void _showBusRoute(String routeId) {
+    final bloc = context.read<TransportBloc>();
+    bloc.add(TransportRouteSelected(routeId));
+
+    // Aquí podríamos destacar la ruta o mostrar información adicional
   }
 
   void _showBusStopInfoModal(BusStopEntity busStop) {
@@ -417,6 +602,130 @@ class _TransportMapPageState extends State<TransportMapPage> {
             ],
           ),
         );
+      },
+    );
+  }
+
+  void _showNearbyStopsModal(List<BusStopEntity> nearbyStops) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Permite que el modal se expanda
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Paradas Cercanas',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${nearbyStops.length} paradas encontradas en 1km a la redonda',
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 16),
+
+              if (nearbyStops.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24.0),
+                  child: Text(
+                    'No se encontraron paradas cercanas en el radio de búsqueda',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                )
+              else
+                Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: nearbyStops.length,
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 16),
+                    itemBuilder: (context, index) {
+                      final stop = nearbyStops[index];
+                      return _buildNearbyStopItem(stop);
+                    },
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildNearbyStopItem(BusStopEntity stop) {
+    // Calcular distancia desde la ubicación del usuario
+    final distance = Geolocator.distanceBetween(
+      _userLocation!.latitude,
+      _userLocation!.longitude,
+      stop.location.latitude,
+      stop.location.longitude,
+    );
+
+    final distanceText = distance < 1000
+        ? '${distance.round()} m'
+        : '${(distance / 1000).toStringAsFixed(1)} km';
+
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(Icons.directions_bus, color: Colors.white, size: 24),
+      ),
+      title: Text(stop.name, style: TextStyle(fontWeight: FontWeight.w500)),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            stop.address,
+            style: TextStyle(fontSize: 12),
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(Icons.directions_walk, size: 12, color: Colors.grey),
+              const SizedBox(width: 4),
+              Text(
+                distanceText,
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              const SizedBox(width: 16),
+              Icon(Icons.route, size: 12, color: Colors.grey),
+              const SizedBox(width: 4),
+              Text(
+                '${stop.routeIds.length} ${stop.routeIds.length == 1 ? 'ruta' : 'rutas'}',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
+          ),
+        ],
+      ),
+      trailing: Icon(Icons.chevron_right, color: Colors.grey),
+      onTap: () {
+        Navigator.pop(context); // Cerrar el modal de paradas cercanas
+
+        // Centrar el mapa en la parada seleccionada
+        _mapController.animateCamera(
+          CameraUpdate.newLatLngZoom(
+            LatLng(stop.location.latitude, stop.location.longitude),
+            16.0, // Zoom más cercano
+          ),
+        );
+
+        // Mostrar la información detallada de la parada después de un breve delay
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _showBusStopInfoModal(stop);
+        });
       },
     );
   }
