@@ -277,16 +277,6 @@ class _TransportMapPageState extends State<TransportMapPage> {
   ) {
     _markers.clear();
 
-    // Marcador de posición inicial (Managua)
-    _markers.add(
-      Marker(
-        markerId: const MarkerId('managua'),
-        position: _initialPosition,
-        infoWindow: const InfoWindow(title: 'Managua'),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-      ),
-    );
-
     // Marcadores de paradas de buses
     for (final stop in busStops) {
       final isSelected = stop.id == selectedBusStopId;
