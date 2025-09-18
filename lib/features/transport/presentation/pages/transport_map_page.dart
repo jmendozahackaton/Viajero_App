@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hackaton_app/core/services/notifications_service.dart';
+import 'package:hackaton_app/domain/entities/notification_preferences_entity.dart';
+import 'package:hackaton_app/features/transport/domain/repositories/bus_proximity_monitor.dart';
 import 'package:hackaton_app/features/transport/domain/repositories/transport_repository.dart';
+import 'package:hackaton_app/features/transport/presentation/widgets/slider_list_tile.dart';
 import '../bloc/transport_bloc.dart';
 import '../../domain/entities/route_entity.dart';
 import '../../domain/entities/bus_entity.dart';
@@ -27,6 +34,9 @@ class _TransportMapPageState extends State<TransportMapPage> {
   final Map<String, LatLng> _busTargetPositions = {};
   LatLng? _userLocation;
   bool _isLocating = false;
+  late BusProximityMonitor _proximityMonitor;
+  late NotificationPreferences _notificationPrefs;
+  Timer? _proximityTimer;
 
   BitmapDescriptor? _busIcon;
   BitmapDescriptor? _busStopIcon;
@@ -35,16 +45,42 @@ class _TransportMapPageState extends State<TransportMapPage> {
   BitmapDescriptor? _userLocationIcon;
 
   @override
-  void dispose() {
-    _mapController.dispose();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     _loadCustomIcons();
     _requestLocationPermissions();
+    _initializeNotifications();
+  }
+
+  Future<void> _initializeNotifications() async {
+    _notificationPrefs = NotificationPreferences(); // Valores por defecto
+    _proximityMonitor = BusProximityMonitor(
+      transportRepository: context.read<TransportRepository>(),
+      notificationService: NotificationService(),
+    );
+
+    await NotificationService().initialize();
+    _startProximityMonitoring();
+  }
+
+  void _startProximityMonitoring() {
+    // Verificar cada 30 segundos
+    _proximityTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      if (_userLocation != null) {
+        await _proximityMonitor.checkProximityToUser(
+          userLocation: _userLocation!,
+          prefs: _notificationPrefs,
+          currentStopName: 'Parada Actual', // Puedes obtener esto del contexto
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    _proximityTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadCustomIcons() async {
@@ -122,8 +158,21 @@ class _TransportMapPageState extends State<TransportMapPage> {
         title: const Text('Mapa de Transporte Público'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.home), // ← Botón de retroceso
+          onPressed: () {
+            GoRouter.of(context).go('/home');
+          },
+          tooltip: 'Regresar al inicio',
+        ),
         actions: [
           // Mantener solo el botón de actualización en AppBar
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: _showNotificationSettings,
+            tooltip: 'Configurar notificaciones',
+          ),
+
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
@@ -221,6 +270,71 @@ class _TransportMapPageState extends State<TransportMapPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showNotificationSettings() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SwitchListTile(
+                    title: Text('Notificaciones de buses'),
+                    value: _notificationPrefs.enabled,
+                    onChanged: (value) {
+                      setState(() {
+                        _notificationPrefs = _notificationPrefs.copyWith(
+                          enabled: value,
+                        );
+                      });
+                    },
+                  ),
+                  SliderListTile(
+                    title: 'Radio de notificación',
+                    value: _notificationPrefs.notificationRadius.toDouble(),
+                    min: 100,
+                    max: 1000,
+                    divisions: 9,
+                    label: '${_notificationPrefs.notificationRadius}m',
+                    onChanged: (value) {
+                      setState(() {
+                        _notificationPrefs = _notificationPrefs.copyWith(
+                          notificationRadius: value.round(),
+                        );
+                      });
+                    },
+                  ),
+                  SliderListTile(
+                    title: 'Tiempo mínimo para notificar',
+                    value: _notificationPrefs.minTimeForNotification.toDouble(),
+                    min: 1,
+                    max: 15,
+                    divisions: 14,
+                    label: '${_notificationPrefs.minTimeForNotification}min',
+                    onChanged: (value) {
+                      setState(() {
+                        _notificationPrefs = _notificationPrefs.copyWith(
+                          minTimeForNotification: value.round(),
+                        );
+                      });
+                    },
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('Guardar'),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
