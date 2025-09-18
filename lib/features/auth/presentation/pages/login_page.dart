@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +17,8 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  StreamSubscription?
+  _authBlocSubscription; // ✅ Guardar referencia al subscription
 
   @override
   void initState() {
@@ -31,8 +35,11 @@ class _LoginPageState extends State<LoginPage> {
   void _setupBlocListener() {
     final authBloc = context.read<AuthBloc>();
 
-    // Escuchar cambios de estado del BLoC
-    authBloc.stream.listen((state) {
+    // Escuchar cambios de estado del BLoC y guardar la referencia
+    _authBlocSubscription = authBloc.stream.listen((state) {
+      if (!mounted)
+        return; // ✅ Verificación CRUCIAL antes de cualquier operación
+
       if (state is AuthAuthenticated) {
         // Login exitoso, navegar al home
         GoRouter.of(context).go('/home');
@@ -182,6 +189,8 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _authBlocSubscription
+        ?.cancel(); // ✅ Cancelar subscription al destruir el widget
     super.dispose();
   }
 }

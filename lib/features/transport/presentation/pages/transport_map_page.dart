@@ -150,6 +150,33 @@ class _TransportMapPageState extends State<TransportMapPage> {
           listener: (context, state) {
             if (state is TransportMapLoadedState) {
               _updateMapData(state);
+
+              // MOVER LA LÓGICA DE DIÁLOGO AQUÍ DENTRO
+              if (state.showRouteDetailsDialog &&
+                  state.dialogRoute != null &&
+                  state.dialogBusStop != null &&
+                  state.dialogETA != null &&
+                  state.dialogDistance != null) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _showRouteDetailsDialog(
+                    state.dialogRoute!,
+                    state.dialogBusStop!,
+                    state.dialogETA!,
+                    state.dialogDistance!,
+                  );
+
+                  final bloc = context.read<TransportBloc>();
+                  bloc.add(TransportResetDialogState());
+                });
+              }
+            }
+
+            // Manejar errores
+            if (state is TransportMapLoadedState &&
+                state.errorMessage != null) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
             }
           },
           builder: (context, state) {
@@ -517,8 +544,10 @@ class _TransportMapPageState extends State<TransportMapPage> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  // TODO: Implementar ver rutas de esta parada
-                  Navigator.pop(context);
+                  Navigator.pop(context); // Cerrar modal actual
+                  _findRoutesForStop(
+                    busStop,
+                  ); // Llamar a la función, NO al modal directamente
                 },
                 child: const Text('Ver rutas disponibles'),
               ),
@@ -527,6 +556,25 @@ class _TransportMapPageState extends State<TransportMapPage> {
         );
       },
     );
+  }
+
+  void _findRoutesForStop(BusStopEntity busStop) async {
+    setState(() => _isLocating = true);
+
+    try {
+      final transportRepository = context.read<TransportRepository>();
+
+      // Usar el método del repository directamente
+      final routes = await transportRepository.getBusRoutesByStop(busStop.id);
+
+      _showRoutesForStopModal(routes, busStop);
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error buscando rutas: $e')));
+    } finally {
+      setState(() => _isLocating = false);
+    }
   }
 
   void _showRouteInfoModal(RouteEntity route) {
@@ -738,5 +786,203 @@ class _TransportMapPageState extends State<TransportMapPage> {
         ],
       ),
     );
+  }
+
+  void _showRoutesForStopModal(
+    List<RouteEntity> routes,
+    BusStopEntity busStop,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Rutas en ${busStop.name}',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+
+              if (routes.isEmpty)
+                const Text('No hay rutas disponibles en esta parada')
+              else
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: routes.length,
+                    itemBuilder: (context, index) {
+                      final route = routes[index];
+                      return ListTile(
+                        title: Text(route.name),
+                        subtitle: Text(route.description),
+                        onTap: () {
+                          Navigator.pop(context); // Cerrar modal de rutas
+                          _calculateRouteETA(
+                            route,
+                            busStop,
+                          ); // Nueva función para ETA
+                        },
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _calculateRouteETA(RouteEntity route, BusStopEntity busStop) async {
+    setState(() => _isLocating = true);
+
+    try {
+      final transportRepository = context.read<TransportRepository>();
+
+      // 1. Obtener buses activos de la ruta
+      final buses = await transportRepository.getActiveBusesByRoute(route.id);
+      if (buses.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No hay buses activos en la ruta ${route.name}'),
+          ),
+        );
+        return;
+      }
+
+      // 2. Calcular ETA para el primer bus
+      final eta = await transportRepository.calculateBusETA(
+        buses.first.id,
+        busStop.id,
+      );
+
+      if (eta != null) {
+        _showRouteDetailsModal(route.id, busStop.id, eta);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No se pudo calcular el tiempo de llegada')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error calculando ETA: $e')));
+    } finally {
+      setState(() => _isLocating = false);
+    }
+  }
+
+  Widget _buildRoutesList(List<RouteEntity> routes, String busStopId) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: routes.length,
+        itemBuilder: (context, index) {
+          final route = routes[index];
+          return ListTile(
+            title: Text(route.name),
+            subtitle: Text(route.description),
+            onTap: () {
+              final bloc = context.read<TransportBloc>();
+              bloc.add(TransportRouteETARequested(route.id, busStopId));
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  void _showRouteDetailsModal(String routeId, String busStopId, Duration eta) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Tiempo estimado de llegada'),
+        content: Text('Llegará en aproximadamente ${_formatDuration(eta)}'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _showRouteDetails(
+                routeId,
+                busStopId,
+                eta,
+              ); // Nueva función para detalles
+            },
+            child: const Text('Ver detalles'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRouteDetails(String routeId, String busStopId, Duration eta) async {
+    setState(() => _isLocating = true);
+
+    try {
+      final transportRepository = context.read<TransportRepository>();
+
+      // Obtener datos completos
+      final route = await transportRepository.getBusRouteById(routeId);
+      final busStop = await transportRepository.getBusStopById(busStopId);
+
+      // Calcular distancia
+      double distance = 0.0;
+      if (_userLocation != null) {
+        distance = await transportRepository.calculateDistance(
+          _userLocation!,
+          busStop.location,
+        );
+      }
+
+      _showRouteDetailsDialog(route, busStop, eta, distance);
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error mostrando detalles: $e')));
+    } finally {
+      setState(() => _isLocating = false);
+    }
+  }
+
+  void _showRouteDetailsDialog(
+    RouteEntity route,
+    BusStopEntity busStop,
+    Duration eta,
+    double distance,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(route.name),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Parada: ${busStop.name}'),
+            Text('Tiempo estimado: ${_formatDuration(eta)}'),
+            Text('Distancia: ${distance.toStringAsFixed(1)} km'),
+            Text('Tarifa: C\$${route.fare.toStringAsFixed(2)}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    if (duration.inMinutes < 1) return 'menos de 1 minuto';
+    if (duration.inMinutes < 60) return '${duration.inMinutes} minutos';
+    return '${duration.inHours} hora(s) ${duration.inMinutes.remainder(60)} minutos';
   }
 }

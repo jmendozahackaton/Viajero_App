@@ -16,9 +16,20 @@ final class TransportMapLoadedState extends TransportState {
   final String? selectedRouteId;
   final String? selectedBusId;
   final String? selectedBusStopId;
-  final LatLng? userLocation; // ← NUEVO: Ubicación real del usuario
-  final bool hasLocationPermission; // ← NUEVO: Estado de permisos
-  final List<BusStopEntity> nearbyBusStops; // ← NUEVO: Paradas cercanas
+  final LatLng? userLocation;
+  final bool hasLocationPermission;
+  final List<BusStopEntity> nearbyBusStops;
+  final List<RouteEntity> stopRoutes;
+  final Map<String, Duration?> stopETAs;
+  final bool isLoadingStopRoutes;
+  final String? errorMessage;
+
+  // NUEVAS propiedades para manejar diálogos
+  final bool showRouteDetailsDialog; // ← Para mostrar/ocultar diálogo
+  final RouteEntity? dialogRoute; // ← Datos del diálogo
+  final BusStopEntity? dialogBusStop; // ← Datos del diálogo
+  final Duration? dialogETA; // ← Datos del diálogo
+  final double? dialogDistance; // ← Datos del diálogo
 
   TransportMapLoadedState({
     required this.initialPosition,
@@ -29,9 +40,19 @@ final class TransportMapLoadedState extends TransportState {
     this.selectedRouteId,
     this.selectedBusId,
     this.selectedBusStopId,
-    this.userLocation, // ← Inicializar en constructor
-    this.hasLocationPermission = false, // ← Valor por defecto
-    this.nearbyBusStops = const [], // ← Inicializar vacío
+    this.userLocation,
+    this.hasLocationPermission = false,
+    this.nearbyBusStops = const [],
+    this.stopRoutes = const [],
+    this.stopETAs = const {},
+    this.isLoadingStopRoutes = false,
+    this.errorMessage,
+    // Inicializar nuevas propiedades
+    this.showRouteDetailsDialog = false, // ← Valor por defecto: false
+    this.dialogRoute,
+    this.dialogBusStop,
+    this.dialogETA,
+    this.dialogDistance,
   });
 
   TransportMapLoadedState copyWith({
@@ -43,9 +64,19 @@ final class TransportMapLoadedState extends TransportState {
     String? selectedRouteId,
     String? selectedBusId,
     String? selectedBusStopId,
-    LatLng? userLocation, // ← NUEVO
-    bool? hasLocationPermission, // ← NUEVO
-    List<BusStopEntity>? nearbyBusStops, // ← NUEVO
+    LatLng? userLocation,
+    bool? hasLocationPermission,
+    List<BusStopEntity>? nearbyBusStops,
+    List<RouteEntity>? stopRoutes,
+    Map<String, Duration?>? stopETAs,
+    bool? isLoadingStopRoutes,
+    String? errorMessage,
+    // Nuevas propiedades para copyWith
+    bool? showRouteDetailsDialog,
+    RouteEntity? dialogRoute,
+    BusStopEntity? dialogBusStop,
+    Duration? dialogETA,
+    double? dialogDistance,
   }) {
     return TransportMapLoadedState(
       initialPosition: initialPosition ?? this.initialPosition,
@@ -56,10 +87,21 @@ final class TransportMapLoadedState extends TransportState {
       selectedRouteId: selectedRouteId ?? this.selectedRouteId,
       selectedBusId: selectedBusId ?? this.selectedBusId,
       selectedBusStopId: selectedBusStopId ?? this.selectedBusStopId,
-      userLocation: userLocation ?? this.userLocation, // ← NUEVO
+      userLocation: userLocation ?? this.userLocation,
       hasLocationPermission:
-          hasLocationPermission ?? this.hasLocationPermission, // ← NUEVO
-      nearbyBusStops: nearbyBusStops ?? this.nearbyBusStops, // ← NUEVO
+          hasLocationPermission ?? this.hasLocationPermission,
+      nearbyBusStops: nearbyBusStops ?? this.nearbyBusStops,
+      stopRoutes: stopRoutes ?? this.stopRoutes,
+      stopETAs: stopETAs ?? this.stopETAs,
+      isLoadingStopRoutes: isLoadingStopRoutes ?? this.isLoadingStopRoutes,
+      errorMessage: errorMessage ?? this.errorMessage,
+      // Nuevas propiedades
+      showRouteDetailsDialog:
+          showRouteDetailsDialog ?? this.showRouteDetailsDialog,
+      dialogRoute: dialogRoute ?? this.dialogRoute,
+      dialogBusStop: dialogBusStop ?? this.dialogBusStop,
+      dialogETA: dialogETA ?? this.dialogETA,
+      dialogDistance: dialogDistance ?? this.dialogDistance,
     );
   }
 }

@@ -14,6 +14,14 @@ abstract class TransportRepository {
   /// Obtiene las rutas que pasan por una parada específica
   Future<List<RouteEntity>> getBusRoutesByStop(String busStopId);
 
+  Future<List<RouteEntity>> getRoutesForStop(String busStopId);
+  Future<List<BusEntity>> getActiveBusesByRoute(String routeId);
+
+  /// Calcula el tiempo estimado de llegada de un bus a una parada
+  Future<Duration?> calculateBusETA(String busId, String busStopId);
+  Future<BusEntity?> findNearestBusToStop(String busStopId);
+  Future<Map<String, Duration?>> calculateETAsForStop(String busStopId);
+
   /// Stream de rutas activas (para actualizaciones en tiempo real)
   Stream<List<RouteEntity>> streamActiveBusRoutes();
 
@@ -53,8 +61,6 @@ abstract class TransportRepository {
   );
 
   // ========== FUNCIONALIDADES PARA USUARIOS ==========
-  /// Calcula el tiempo estimado de llegada de un bus a una parada
-  Future<int> calculateBusETA(String busId, String busStopId);
 
   /// Calcula la distancia entre un bus y una parada
   Future<double> calculateDistanceToBus(String busId, LatLng userLocation);

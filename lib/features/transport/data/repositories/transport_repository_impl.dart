@@ -178,9 +178,131 @@ class TransportRepositoryImpl implements TransportRepository {
 
   // ========== MÉTODOS PENDIENTES DE IMPLEMENTACIÓN ==========
   @override
-  Future<int> calculateBusETA(String busId, String busStopId) async {
-    // -TODO: Implementar cálculo de ETA
-    return 5; // Valor temporal
+  Future<List<RouteEntity>> getRoutesForStop(String busStopId) async {
+    try {
+      debugPrint('🔄 Buscando parada: $busStopId');
+      final busStop = await getBusStopById(busStopId);
+      debugPrint('📋 Parada encontrada: ${busStop.name}');
+      debugPrint('🚌 Route IDs: ${busStop.routeIds}');
+
+      if (busStop.routeIds.isEmpty) {
+        debugPrint('❌ La parada no tiene rutas asociadas');
+        return [];
+      }
+
+      final routes = <RouteEntity>[];
+      for (final routeId in busStop.routeIds) {
+        try {
+          debugPrint('🛣️ Buscando ruta: $routeId');
+          final route = await getBusRouteById(routeId);
+          routes.add(route);
+          debugPrint('✅ Ruta encontrada: ${route.name}');
+        } catch (e) {
+          debugPrint('❌ Error obteniendo ruta $routeId: $e');
+        }
+      }
+
+      debugPrint('✅ Total rutas encontradas: ${routes.length}');
+      return routes;
+    } catch (e) {
+      debugPrint('❌ Error crítico obteniendo rutas para parada: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<BusEntity>> getActiveBusesByRoute(String routeId) async {
+    try {
+      final query = await _busesCollection
+          .where('routeId', isEqualTo: routeId)
+          .where('isActive', isEqualTo: true)
+          .get();
+
+      return query.docs
+          .map((doc) => _mapToBusEntity(doc.data(), doc.id))
+          .toList();
+    } catch (e) {
+      throw Exception('Error obteniendo buses por ruta: $e');
+    }
+  }
+
+  @override
+  Future<Duration?> calculateBusETA(String busId, String busStopId) async {
+    try {
+      final bus = await getBusById(busId);
+      final busStop = await getBusStopById(busStopId);
+
+      // Calcular distancia entre bus y parada
+      final distance = Geolocator.distanceBetween(
+        bus.currentLocation.latitude,
+        bus.currentLocation.longitude,
+        busStop.location.latitude,
+        busStop.location.longitude,
+      );
+
+      // Calcular tiempo basado en velocidad promedio (20 km/h)
+      const averageSpeedKph = 20.0;
+      const averageSpeedMps = averageSpeedKph * 1000 / 3600;
+
+      final seconds = distance / averageSpeedMps;
+      return Duration(seconds: seconds.round());
+    } catch (e) {
+      debugPrint('Error calculando ETA: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<BusEntity?> findNearestBusToStop(String busStopId) async {
+    try {
+      final busStop = await getBusStopById(busStopId);
+      final allBuses = await getActiveBuses();
+
+      if (allBuses.isEmpty) return null;
+
+      BusEntity? nearestBus;
+      double? minDistance;
+
+      for (final bus in allBuses) {
+        final distance = Geolocator.distanceBetween(
+          bus.currentLocation.latitude,
+          bus.currentLocation.longitude,
+          busStop.location.latitude,
+          busStop.location.longitude,
+        );
+
+        if (minDistance == null || distance < minDistance) {
+          minDistance = distance;
+          nearestBus = bus;
+        }
+      }
+
+      return nearestBus;
+    } catch (e) {
+      debugPrint('Error encontrando bus más cercano: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<Map<String, Duration?>> calculateETAsForStop(String busStopId) async {
+    try {
+      final busStop = await getBusStopById(busStopId);
+      final etas = <String, Duration?>{};
+
+      for (final routeId in busStop.routeIds) {
+        final buses = await getActiveBusesByRoute(routeId);
+        if (buses.isNotEmpty) {
+          // Tomar el primer bus de la ruta (podría mejorarse para tomar el más cercano)
+          final eta = await calculateBusETA(buses.first.id, busStopId);
+          etas[routeId] = eta;
+        }
+      }
+
+      return etas;
+    } catch (e) {
+      throw Exception('Error calculando ETAs para parada: $e');
+    }
   }
 
   @override
@@ -332,8 +454,34 @@ class TransportRepositoryImpl implements TransportRepository {
   }
 
   @override
-  Future<List<RouteEntity>> getBusRoutesByStop(String busStopId) {
-    throw UnimplementedError();
+  Future<List<RouteEntity>> getBusRoutesByStop(String busStopId) async {
+    debugPrint('🔍 Buscando rutas para parada: $busStopId');
+
+    try {
+      // 1. Obtener la parada
+      final busStop = await getBusStopById(busStopId);
+      debugPrint('✅ Parada: ${busStop.name}, Rutas: ${busStop.routeIds}');
+
+      if (busStop.routeIds.isEmpty) {
+        return [];
+      }
+
+      // 2. Obtener cada ruta
+      final routes = <RouteEntity>[];
+      for (final routeId in busStop.routeIds) {
+        try {
+          final route = await getBusRouteById(routeId);
+          routes.add(route);
+        } catch (e) {
+          debugPrint('❌ Error obteniendo ruta $routeId: $e');
+        }
+      }
+
+      return routes;
+    } catch (e) {
+      debugPrint('💥 Error obteniendo rutas para parada: $e');
+      throw Exception('Error obteniendo rutas para parada: $e');
+    }
   }
 
   @override

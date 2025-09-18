@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
@@ -28,14 +29,17 @@ class TransportBloc extends Bloc<TransportEvent, TransportState> {
     on<TransportBusSelected>(_onBusSelected);
     on<TransportBusStopSelected>(_onBusStopSelected);
     on<TransportUserLocationRequested>(_onUserLocationRequested);
-
     on<TransportRoutesUpdated>(_onRoutesUpdated);
     on<TransportBusesUpdated>(_onBusesUpdated);
     on<TransportBusStopsUpdated>(_onBusStopsUpdated);
     on<TransportLocationPermissionRequested>(_onLocationPermissionRequested);
     on<TransportNearbyBusStopsRequested>(_onNearbyBusStopsRequested);
     on<TransportUserLocationUpdated>(_onUserLocationUpdated);
-
+    on<TransportRoutesForStopRequested>(_onRoutesForStopRequested);
+    on<TransportStopETAsRequested>(_onStopETAsRequested);
+    on<TransportRouteETARequested>(_onRouteETARequested);
+    on<TransportRouteDetailsRequested>(_onRouteDetailsRequested);
+    on<TransportResetDialogState>(_onResetDialogState);
     _startStreamSubscriptions();
   }
 
@@ -83,6 +87,24 @@ class TransportBloc extends Bloc<TransportEvent, TransportState> {
         // Manejar errores de stream
       },
     );
+  }
+
+  void _onResetDialogState(
+    TransportResetDialogState event,
+    Emitter<TransportState> emit,
+  ) {
+    if (state is TransportMapLoadedState) {
+      final currentState = state as TransportMapLoadedState;
+      emit(
+        currentState.copyWith(
+          showRouteDetailsDialog: false,
+          dialogRoute: null,
+          dialogBusStop: null,
+          dialogETA: null,
+          dialogDistance: null,
+        ),
+      );
+    }
   }
 
   void _onRoutesUpdated(
@@ -327,6 +349,167 @@ class TransportBloc extends Bloc<TransportEvent, TransportState> {
           userLocation: event.userLocation,
         ),
       );
+    }
+  }
+
+  Future<void> _onRoutesForStopRequested(
+    TransportRoutesForStopRequested event,
+    Emitter<TransportState> emit,
+  ) async {
+    if (state is TransportMapLoadedState) {
+      try {
+        final currentState = state as TransportMapLoadedState;
+
+        // 1. Indicar que está cargando y limpiar error anterior
+        emit(
+          currentState.copyWith(
+            isLoadingStopRoutes: true,
+            errorMessage: null,
+            stopRoutes: [], // Limpiar rutas anteriores
+          ),
+        );
+
+        // 2. Obtener las rutas usando el método existente
+        final routes = await transportRepository.getBusRoutesByStop(
+          event.busStopId,
+        );
+
+        // 3. Actualizar estado con las rutas
+        emit(
+          currentState.copyWith(
+            stopRoutes: routes,
+            isLoadingStopRoutes: false,
+            selectedBusStopId: event.busStopId,
+          ),
+        );
+      } catch (e) {
+        // 4. Manejar error
+        final currentState = state as TransportMapLoadedState;
+        emit(
+          currentState.copyWith(
+            isLoadingStopRoutes: false,
+            errorMessage: 'Error cargando rutas: $e',
+            stopRoutes: [], // Limpiar rutas en caso de error
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _onRouteETARequested(
+    TransportRouteETARequested event,
+    Emitter<TransportState> emit,
+  ) async {
+    if (state is TransportMapLoadedState) {
+      try {
+        final currentState = state as TransportMapLoadedState;
+
+        // Encontrar el bus más cercano de esta ruta
+        final buses = await transportRepository.getActiveBusesByRoute(
+          event.routeId,
+        );
+        if (buses.isEmpty) {
+          emit(
+            currentState.copyWith(
+              errorMessage: 'No hay buses activos en esta ruta',
+            ),
+          );
+          return;
+        }
+
+        // Calcular ETA para el bus más cercano
+        final eta = await transportRepository.calculateBusETA(
+          buses.first.id,
+          event.busStopId,
+        );
+
+        if (eta != null) {
+          emit(
+            currentState.copyWith(
+              stopETAs: {...currentState.stopETAs, event.routeId: eta},
+            ),
+          );
+        } else {
+          emit(
+            currentState.copyWith(
+              errorMessage: 'No se pudo calcular el tiempo de llegada',
+            ),
+          );
+        }
+      } catch (e) {
+        final currentState = state as TransportMapLoadedState;
+        emit(currentState.copyWith(errorMessage: 'Error calculando ETA: $e'));
+      }
+    }
+  }
+
+  Future<void> _onRouteDetailsRequested(
+    TransportRouteDetailsRequested event,
+    Emitter<TransportState> emit,
+  ) async {
+    if (state is TransportMapLoadedState) {
+      try {
+        final currentState = state as TransportMapLoadedState;
+        final route = await transportRepository.getBusRouteById(event.routeId);
+        final busStop = await transportRepository.getBusStopById(
+          event.busStopId,
+        );
+
+        // Calcular distancia entre usuario y parada
+        double distance = 0.0;
+        if (currentState.userLocation != null) {
+          distance = await transportRepository.calculateDistance(
+            currentState.userLocation!,
+            busStop.location,
+          );
+        }
+
+        // Actualizar estado para mostrar diálogo
+        emit(
+          currentState.copyWith(
+            showRouteDetailsDialog: true, // ← Activar diálogo
+            dialogRoute: route, // ← Datos del diálogo
+            dialogBusStop: busStop, // ← Datos del diálogo
+            dialogETA: event.eta, // ← Datos del diálogo
+            dialogDistance: distance, // ← Datos del diálogo
+            errorMessage: null, // ← Limpiar errores
+          ),
+        );
+      } catch (e) {
+        final currentState = state as TransportMapLoadedState;
+        emit(
+          currentState.copyWith(
+            errorMessage: 'Error mostrando detalles: $e',
+            showRouteDetailsDialog:
+                false, // ← Asegurar que no se muestre diálogo
+          ),
+        );
+      }
+    }
+  }
+
+  // Opcional: si quieres calcular todos los ETAs a la vez
+  Future<void> _onStopETAsRequested(
+    TransportStopETAsRequested event,
+    Emitter<TransportState> emit,
+  ) async {
+    if (state is TransportMapLoadedState) {
+      try {
+        final currentState = state as TransportMapLoadedState;
+        final etas = await transportRepository.calculateETAsForStop(
+          event.busStopId,
+        );
+
+        // Guardar ETAs en el estado para mostrarlos en el modal
+        emit(currentState.copyWith(stopETAs: etas));
+      } catch (e) {
+        final currentState = state as TransportMapLoadedState;
+        emit(
+          currentState.copyWith(
+            errorMessage: 'Error calculando tiempos de llegada: $e',
+          ),
+        );
+      }
     }
   }
 }
