@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,6 +8,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hackaton_app/core/services/notifications_service.dart';
 import 'package:hackaton_app/domain/entities/notification_preferences_entity.dart';
+import 'package:hackaton_app/features/transport/data/mock_data/mock_transport_data.dart';
+import 'package:hackaton_app/features/transport/data/services/bus_movement_service.dart';
 import 'package:hackaton_app/features/transport/domain/repositories/bus_proximity_monitor.dart';
 import 'package:hackaton_app/features/transport/domain/repositories/transport_repository.dart';
 import 'package:hackaton_app/features/transport/presentation/widgets/slider_list_tile.dart';
@@ -37,6 +40,7 @@ class _TransportMapPageState extends State<TransportMapPage> {
   late BusProximityMonitor _proximityMonitor;
   late NotificationPreferences _notificationPrefs;
   Timer? _proximityTimer;
+  bool _isSimulationStarted = false;
 
   BitmapDescriptor? _busIcon;
   BitmapDescriptor? _busStopIcon;
@@ -50,6 +54,31 @@ class _TransportMapPageState extends State<TransportMapPage> {
     _loadCustomIcons();
     _requestLocationPermissions();
     _initializeNotifications();
+    _initializeDevelopmentData();
+  }
+
+  Future<void> _initializeDevelopmentData() async {
+    const bool isDevelopment = true; // Puedes hacer esto configurable
+
+    if (isDevelopment && !_isSimulationStarted) {
+      try {
+        final firestore = FirebaseFirestore.instance;
+
+        // Crear datos de prueba
+        final mockData = MockDataService(firestore);
+        await mockData.createMockTransportData();
+        print('✅ Datos de prueba creados exitosamente');
+
+        // Iniciar simulación de movimiento
+        final movementService = BusMovementService(firestore);
+        movementService.startSimulatingBusMovements();
+        print('✅ Simulación de movimiento iniciada');
+
+        _isSimulationStarted = true; // Marcar como iniciado
+      } catch (e) {
+        print('⚠️ Error en configuración de desarrollo: $e');
+      }
+    }
   }
 
   Future<void> _initializeNotifications() async {
