@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hackaton_app/domain/entities/user_entity.dart';
 import 'package:hackaton_app/features/auth/presentation/blocs/auth_bloc.dart';
 
 class HomePage extends StatelessWidget {
@@ -16,14 +17,14 @@ class HomePage extends StatelessWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthUnauthenticated) {
-          // Navegar al login después de cerrar sesión
           GoRouter.of(context).go('/login');
         }
       },
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           if (state is AuthAuthenticated) {
-            final user = state.user; // ✅ Usuario COMPLETO desde Firestore
+            final user = state.user;
+            final bool isAdmin = user.userType == 'admin';
 
             return Scaffold(
               appBar: AppBar(
@@ -31,6 +32,14 @@ class HomePage extends StatelessWidget {
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 actions: [
+                  if (isAdmin)
+                    IconButton(
+                      icon: const Icon(Icons.admin_panel_settings),
+                      onPressed: () {
+                        GoRouter.of(context).go('/admin/dashboard');
+                      },
+                      tooltip: 'Panel de Administración',
+                    ),
                   IconButton(
                     icon: const Icon(Icons.logout),
                     onPressed: () => _signOut(context),
@@ -43,7 +52,7 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Información del usuario (¡AHORA CON DATOS COMPLETOS!)
+                    // Información del usuario
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -51,7 +60,7 @@ class HomePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '¡Bienvenido!',
+                              '¡Bienvenido${isAdmin ? ' Administrador' : ''}!',
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -68,8 +77,12 @@ class HomePage extends StatelessWidget {
                               style: const TextStyle(fontSize: 16),
                             ),
                             Text(
-                              'Tipo: ${user.userType == 'admin' ? 'Administrador' : 'Pasajero'}',
-                              style: const TextStyle(fontSize: 16),
+                              'Tipo: ${isAdmin ? 'Administrador' : 'Pasajero'}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: isAdmin ? Colors.green : Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -79,7 +92,7 @@ class HomePage extends StatelessWidget {
 
                     // Funcionalidades principales
                     Text(
-                      'Funcionalidades',
+                      isAdmin ? 'Panel de Control' : 'Funcionalidades',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -97,52 +110,7 @@ class HomePage extends StatelessWidget {
                               mainAxisSpacing: 16,
                               childAspectRatio: 1.2,
                             ),
-                        children: [
-                          _buildFeatureCard(
-                            icon: Icons.map,
-                            title: 'Mapa de Rutas',
-                            color: Colors.blue,
-                            onTap: () {
-                              GoRouter.of(context).go('/transport-map');
-                            },
-                          ),
-                          _buildFeatureCard(
-                            icon: Icons.directions_bus,
-                            title: 'Ver Transportes',
-                            color: Colors.green,
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Transportes en desarrollo'),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildFeatureCard(
-                            icon: Icons.schedule,
-                            title: 'Horarios',
-                            color: Colors.orange,
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Horarios en desarrollo'),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildFeatureCard(
-                            icon: Icons.notifications,
-                            title: 'Alertas',
-                            color: Colors.red,
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Alertas en desarrollo'),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                        children: _getFeatureCards(context, isAdmin, user),
                       ),
                     ),
                   ],
@@ -154,7 +122,6 @@ class HomePage extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()),
             );
           } else {
-            // Si no está autenticado, mostrar loading y redirigir
             Future.delayed(Duration.zero, () {
               GoRouter.of(context).go('/login');
             });
@@ -165,6 +132,144 @@ class HomePage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  List<Widget> _getFeatureCards(
+    BuildContext context,
+    bool isAdmin,
+    UserEntity user,
+  ) {
+    if (isAdmin) {
+      return _getAdminFeatureCards(context);
+    } else {
+      return _getUserFeatureCards(context);
+    }
+  }
+
+  List<Widget> _getAdminFeatureCards(BuildContext context) {
+    return [
+      _buildFeatureCard(
+        icon: Icons.people,
+        title: 'Gestión de Usuarios',
+        color: Colors.purple,
+        onTap: () {
+          GoRouter.of(context).go('/admin/users');
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.directions_bus,
+        title: 'Gestión de Transportes',
+        color: Colors.orange,
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Gestión de transportes en desarrollo'),
+            ),
+          );
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.map,
+        title: 'Mapa de Rutas',
+        color: Colors.blue,
+        onTap: () {
+          GoRouter.of(context).go('/transport-map');
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.analytics,
+        title: 'Estadísticas',
+        color: Colors.green,
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Estadísticas en desarrollo')),
+          );
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.settings,
+        title: 'Configuración',
+        color: Colors.grey,
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Configuración en desarrollo')),
+          );
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.notifications_active,
+        title: 'Notificaciones Push',
+        color: Colors.red,
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Notificaciones push en desarrollo')),
+          );
+        },
+      ),
+    ];
+  }
+
+  List<Widget> _getUserFeatureCards(BuildContext context) {
+    return [
+      _buildFeatureCard(
+        icon: Icons.map,
+        title: 'Mapa de Rutas',
+        color: Colors.blue,
+        onTap: () {
+          GoRouter.of(context).go('/transport-map');
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.directions_bus,
+        title: 'Ver Transportes',
+        color: Colors.green,
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Transportes en desarrollo')),
+          );
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.schedule,
+        title: 'Horarios',
+        color: Colors.orange,
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Horarios en desarrollo')),
+          );
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.notifications,
+        title: 'Alertas',
+        color: Colors.red,
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Alertas en desarrollo')),
+          );
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.person,
+        title: 'Mi Perfil',
+        color: Colors.purple,
+        onTap: () {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Perfil en desarrollo')));
+        },
+      ),
+      _buildFeatureCard(
+        icon: Icons.history,
+        title: 'Historial de Viajes',
+        color: Colors.teal,
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Historial en desarrollo')),
+          );
+        },
+      ),
+    ];
   }
 
   Widget _buildFeatureCard({

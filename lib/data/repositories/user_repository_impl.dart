@@ -128,4 +128,40 @@ class UserRepositoryImpl implements UserRepository {
       throw Exception('Failed to check if user exists: $e');
     }
   }
+
+  @override
+  Future<List<UserEntity>> getAllUsers() async {
+    try {
+      final querySnapshot = await _firestore.collection('users').get();
+      return querySnapshot.docs.map((doc) {
+        return UserModel.fromMap(doc.data() as Map<String, dynamic>).toEntity();
+      }).toList();
+    } catch (e) {
+      throw Exception('Error obteniendo usuarios: $e');
+    }
+  }
+
+  @override
+  Future<void> updateUserRole(String userId, String newRole) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'userType': newRole,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Error actualizando rol: $e');
+    }
+  }
+
+  @override
+  Future<void> updateUserStatus(String userId, bool isActive) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'isActive': isActive,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Error actualizando estado: $e');
+    }
+  }
 }

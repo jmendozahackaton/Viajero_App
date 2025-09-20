@@ -10,4 +10,7 @@ abstract class UserRepository {
   Future<List<UserEntity>> getUsersByType(String userType);
   Stream<UserEntity> streamUser(String userId);
   Future<bool> userExists(String userId);
+  Future<List<UserEntity>> getAllUsers();
+  Future<void> updateUserRole(String userId, String newRole);
+  Future<void> updateUserStatus(String userId, bool isActive);
 }
