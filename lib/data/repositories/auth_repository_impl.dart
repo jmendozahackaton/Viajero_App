@@ -13,6 +13,34 @@ class AuthRepositoryImpl implements AuthRepository {
     : _auth = auth ?? FirebaseAuth.instance,
       _firestore = firestore ?? FirebaseFirestore.instance;
 
+  // ✅ MÉTODO PARA TRAducIR ERRORES DE FIREBASE
+  String _getAuthErrorMessage(String errorCode) {
+    switch (errorCode) {
+      case 'user-not-found':
+        return 'No existe una cuenta con este correo electrónico';
+      case 'wrong-password':
+        return 'Contraseña incorrecta';
+      case 'invalid-email':
+        return 'Correo electrónico no válido';
+      case 'user-disabled':
+        return 'Esta cuenta ha sido desactivada';
+      case 'too-many-requests':
+        return 'Demasiados intentos fallidos. Intenta nuevamente más tarde';
+      case 'operation-not-allowed':
+        return 'El inicio de sesión con correo y contraseña no está habilitado';
+      case 'network-request-failed':
+        return 'Error de conexión. Verifica tu internet';
+      case 'email-already-in-use':
+        return 'Este correo electrónico ya está registrado';
+      case 'weak-password':
+        return 'La contraseña es demasiado débil. Use al menos 6 caracteres';
+      case 'invalid-credential':
+        return 'Credenciales inválidas';
+      default:
+        return 'Error de autenticación. Por favor intenta nuevamente';
+    }
+  }
+
   @override
   Future<UserEntity> signUpWithEmailAndPassword({
     required String email,
@@ -48,8 +76,13 @@ class AuthRepositoryImpl implements AuthRepository {
       await _firestore.collection('users').doc(user.uid).set(userModel.toMap());
 
       return userModel.toEntity();
+    } on FirebaseAuthException catch (e) {
+      // ✅ CAPTURAR ERRORES ESPECÍFICOS DE FIREBASE
+      throw Exception(_getAuthErrorMessage(e.code));
+    } on FirebaseException catch (e) {
+      throw Exception('Error de Firebase: ${e.message}');
     } catch (e) {
-      throw Exception('Error en registro: $e');
+      throw Exception('Error inesperado en registro: $e');
     }
   }
 
@@ -77,8 +110,13 @@ class AuthRepositoryImpl implements AuthRepository {
         userDoc.data() as Map<String, dynamic>,
       );
       return userModel.toEntity();
+    } on FirebaseAuthException catch (e) {
+      // ✅ CAPTURAR ERRORES ESPECÍFICOS DE FIREBASE AUTH
+      throw Exception(_getAuthErrorMessage(e.code));
+    } on FirebaseException catch (e) {
+      throw Exception('Error de Firestore: ${e.message}');
     } catch (e) {
-      throw Exception('Error en login: $e');
+      throw Exception('Error inesperado en login: $e');
     }
   }
 
@@ -102,14 +140,23 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       return userEntity;
+    } on FirebaseAuthException catch (e) {
+      // ✅ CAPTURAR ERRORES DE AUTENTICACIÓN TAMBIÉN EN ADMIN LOGIN
+      throw Exception(_getAuthErrorMessage(e.code));
     } catch (e) {
-      throw Exception('Error en login de administrador: $e');
+      throw Exception(
+        'Error en login de administrador: ${e.toString().replaceFirst('Exception: ', '')}',
+      );
     }
   }
 
   @override
   Future<void> signOut() async {
-    await _auth.signOut();
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      throw Exception('Error al cerrar sesión: $e');
+    }
   }
 
   @override
@@ -117,17 +164,22 @@ class AuthRepositoryImpl implements AuthRepository {
     return _auth.authStateChanges().asyncMap((firebaseUser) async {
       if (firebaseUser == null) return null;
 
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(firebaseUser.uid)
-          .get();
+      try {
+        final userDoc = await _firestore
+            .collection('users')
+            .doc(firebaseUser.uid)
+            .get();
 
-      if (!userDoc.exists) return null;
+        if (!userDoc.exists) return null;
 
-      final userModel = UserModel.fromMap(
-        userDoc.data() as Map<String, dynamic>,
-      );
-      return userModel.toEntity();
+        final userModel = UserModel.fromMap(
+          userDoc.data() as Map<String, dynamic>,
+        );
+        return userModel.toEntity();
+      } catch (e) {
+        // Silenciar errores en el stream para no romper la app
+        return null;
+      }
     });
   }
 

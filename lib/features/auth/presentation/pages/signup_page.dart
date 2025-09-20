@@ -28,12 +28,27 @@ class _SignUpPageState extends State<SignUpPage> {
     final authBloc = context.read<AuthBloc>();
 
     authBloc.stream.listen((state) {
-      if (state is AuthAuthenticated) {
-        // Registro exitoso, navegar al home
-        GoRouter.of(context).go('/home');
+      if (!mounted) return;
+
+      if (state is AuthRegistrationSuccess) {
+        // ✅ REGISTRO EXITOSO - Mostrar mensaje y regresar al login
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.message),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+
+        // Regresar a login después de un breve delay
+        Future.delayed(Duration(seconds: 2), () {
+          if (mounted) {
+            GoRouter.of(context).go('/login');
+          }
+        });
+
         setState(() => _isLoading = false);
       } else if (state is AuthError) {
-        // Mostrar error
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -41,6 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
       } else if (state is AuthLoading) {
         setState(() => _isLoading = true);
       }
+      // ✅ IMPORTANTE: NO manejar AuthAuthenticated aquí para registro
     });
   }
 

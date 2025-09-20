@@ -20,3 +20,9 @@ final class AuthError extends AuthState {
 
   AuthError(this.message);
 }
+
+final class AuthRegistrationSuccess extends AuthState {
+  final String message;
+
+  AuthRegistrationSuccess(this.message);
+}

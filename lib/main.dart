@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hackaton_app/core/services/notifications_service.dart';
 import 'package:hackaton_app/features/transport/data/mock_data/mock_transport_data.dart';
 import 'package:hackaton_app/features/transport/data/services/bus_movement_service.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,10 @@ void main() async {
 
   // Inicializar Firebase
   await FirebaseService.initialize();
+
+  // ✅ INICIALIZAR SERVICIO DE NOTIFICACIONES
+  final notificationService = NotificationService();
+  await notificationService.initialize();
 
   // ✅ TEMPORAL: Crear datos de prueba y simular movimiento
   const bool isDevelopment = true;

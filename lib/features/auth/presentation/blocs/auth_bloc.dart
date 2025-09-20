@@ -105,14 +105,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         displayName: event.displayName,
       );
 
-      // Forzar verificación completa después del registro
-      add(AuthCheckRequested());
+      // ✅ OPCIÓN: Cerrar sesión automáticamente después del registro
+      await authRepository.signOut();
+
+      emit(AuthRegistrationSuccess('Cuenta creada exitosamente'));
     } catch (e) {
-      emit(
-        AuthError(
-          'Error en registro: ${e.toString().replaceFirst('Exception: ', '')}',
-        ),
-      );
+      emit(AuthError('Error en registro: ${e.toString()}'));
     }
   }
 
