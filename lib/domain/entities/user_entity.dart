@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserEntity {
   final String uid;
   final String email;
@@ -22,7 +24,7 @@ class UserEntity {
     required this.updatedAt,
     this.fcmToken,
     required this.preferences,
-    this.isActive = true,
+    required this.isActive,
   });
 
   UserEntity copyWith({
@@ -68,6 +70,40 @@ class UserEntity {
       'preferences': preferences,
       'isActive': isActive,
     };
+  }
+
+  // Método para crear UserModel desde Map (desde Firestore)
+  factory UserEntity.fromMap(Map<String, dynamic> map) {
+    return UserEntity(
+      uid: map['uid'] ?? '',
+      email: map['email'] ?? '',
+      displayName: map['displayName'] ?? '',
+      userType: map['userType'] ?? 'passenger',
+      phoneNumber: map['phoneNumber'],
+      photoURL: map['photoURL'],
+      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      updatedAt: (map['updatedAt'] as Timestamp).toDate(),
+      fcmToken: map['fcmToken'],
+      preferences: Map<String, dynamic>.from(map['preferences'] ?? {}),
+      isActive: map['isActive'] ?? true,
+    );
+  }
+
+  // Método para crear un UserModel vacío (útil para inicialización)
+  factory UserEntity.empty() {
+    return UserEntity(
+      uid: '',
+      email: '',
+      displayName: '',
+      userType: 'passenger',
+      phoneNumber: null,
+      photoURL: null,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      fcmToken: null,
+      preferences: {'notifications': true, 'darkMode': false, 'language': 'es'},
+      isActive: true,
+    );
   }
 
   @override

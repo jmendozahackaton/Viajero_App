@@ -14,6 +14,7 @@ extension UserModelExtension on UserModel {
       updatedAt: updatedAt,
       fcmToken: fcmToken,
       preferences: Map<String, dynamic>.from(preferences),
+      isActive: isActive,
     );
   }
 }
@@ -31,6 +32,7 @@ extension UserEntityExtension on UserEntity {
       updatedAt: updatedAt,
       fcmToken: fcmToken,
       preferences: Map<String, dynamic>.from(preferences),
+      isActive: isActive,
     );
   }
 }

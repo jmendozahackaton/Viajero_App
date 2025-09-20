@@ -1,11 +1,17 @@
 // user_details_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:hackaton_app/domain/entities/user_entity.dart';
+import 'package:hackaton_app/features/user/presentation/bloc/user_bloc.dart';
 
 class UserDetailsDialog extends StatelessWidget {
   final UserEntity user;
+  final UserBloc userBloc;
 
-  const UserDetailsDialog({super.key, required this.user});
+  const UserDetailsDialog({
+    super.key,
+    required this.user,
+    required this.userBloc,
+  });
 
   @override
   Widget build(BuildContext context) {

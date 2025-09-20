@@ -71,6 +71,7 @@ class AuthRepositoryImpl implements AuthRepository {
           'darkMode': false,
           'language': 'es',
         },
+        isActive: true,
       );
 
       await _firestore.collection('users').doc(user.uid).set(userModel.toMap());
@@ -200,6 +201,7 @@ class AuthRepositoryImpl implements AuthRepository {
       updatedAt: DateTime.now(),
       fcmToken: null,
       preferences: {},
+      isActive: true,
     );
   }
 

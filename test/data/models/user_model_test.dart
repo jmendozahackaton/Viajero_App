@@ -28,6 +28,7 @@ void main() {
           'darkMode': false,
           'language': 'es',
         },
+        isActive: true,
       );
 
       // Convertir a mapa
@@ -54,6 +55,7 @@ void main() {
         updatedAt: DateTime.now(),
         fcmToken: null,
         preferences: {},
+        isActive: true,
       );
 
       final userMap = user.toMap();
@@ -76,6 +78,7 @@ void main() {
         updatedAt: DateTime.now(),
         fcmToken: null,
         preferences: {},
+        isActive: true,
       );
 
       final copiedUser = originalUser.copyWith(

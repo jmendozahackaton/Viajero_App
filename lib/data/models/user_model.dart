@@ -11,6 +11,7 @@ class UserModel {
   final DateTime updatedAt;
   final String? fcmToken;
   final Map<String, dynamic> preferences;
+  final bool isActive;
 
   UserModel({
     required this.uid,
@@ -23,6 +24,7 @@ class UserModel {
     required this.updatedAt,
     this.fcmToken,
     required this.preferences,
+    required this.isActive,
   });
 
   // Método para convertir UserModel a Map (para Firestore)
@@ -38,6 +40,7 @@ class UserModel {
       'updatedAt': Timestamp.fromDate(updatedAt),
       'fcmToken': fcmToken,
       'preferences': preferences,
+      'isActive': isActive,
     };
   }
 
@@ -54,6 +57,7 @@ class UserModel {
       updatedAt: (map['updatedAt'] as Timestamp).toDate(),
       fcmToken: map['fcmToken'],
       preferences: Map<String, dynamic>.from(map['preferences'] ?? {}),
+      isActive: map['isActive'] ?? true,
     );
   }
 
@@ -70,6 +74,7 @@ class UserModel {
       updatedAt: DateTime.now(),
       fcmToken: null,
       preferences: {'notifications': true, 'darkMode': false, 'language': 'es'},
+      isActive: true,
     );
   }
 
@@ -85,6 +90,7 @@ class UserModel {
     DateTime? updatedAt,
     String? fcmToken,
     Map<String, dynamic>? preferences,
+    bool? isActive,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -97,6 +103,7 @@ class UserModel {
       updatedAt: updatedAt ?? this.updatedAt,
       fcmToken: fcmToken ?? this.fcmToken,
       preferences: preferences ?? this.preferences,
+      isActive: isActive ?? this.isActive,
     );
   }
 

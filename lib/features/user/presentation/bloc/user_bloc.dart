@@ -9,6 +9,7 @@ part 'user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final UserRepository userRepository;
+  List<UserEntity> _allUsers = [];
 
   UserBloc({required this.userRepository}) : super(UserInitial()) {
     on<UsersLoadRequested>(_onUsersLoadRequested);
@@ -24,12 +25,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     Emitter<UserState> emit,
   ) async {
     emit(UserLoading());
-
     try {
       final users = await userRepository.getAllUsers();
+      _allUsers = users; // ← Guardar lista completa
       emit(UsersLoadSuccess(users));
     } catch (e) {
-      emit(UserError('Error cargando usuarios: ${e.toString()}'));
+      emit(UserError('Error al cargar usuarios: ${e.toString()}'));
     }
   }
 
@@ -65,11 +66,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   ) async {
     try {
       await userRepository.updateUserStatus(event.userId, event.isActive);
-      emit(
-        UserOperationSuccess(
-          event.isActive ? 'Usuario activado' : 'Usuario desactivado',
-        ),
-      );
+      emit(UserOperationSuccess('Estado de usuario actualizado'));
       add(UsersLoadRequested());
     } catch (e) {
       emit(UserError('Error cambiando estado: ${e.toString()}'));
@@ -93,17 +90,21 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     UsersSearchRequested event,
     Emitter<UserState> emit,
   ) async {
-    if (state is UsersLoadSuccess) {
-      final currentState = state as UsersLoadSuccess;
-      final query = event.query.toLowerCase();
+    final query = event.query.trim().toLowerCase();
 
-      final filteredUsers = currentState.users.where((user) {
-        return user.email.toLowerCase().contains(query) ||
-            user.displayName.toLowerCase().contains(query) ||
-            user.userType.toLowerCase().contains(query);
-      }).toList();
-
-      emit(UsersSearchSuccess(filteredUsers));
+    // Si la búsqueda está vacía, volver a mostrar todos los usuarios
+    if (query.isEmpty) {
+      emit(UsersLoadSuccess(_allUsers));
+      return;
     }
+
+    // Filtrar usuarios desde la lista completa
+    final filteredUsers = _allUsers.where((user) {
+      return user.email.toLowerCase().contains(query) ||
+          user.displayName?.toLowerCase().contains(query) == true ||
+          user.userType.toLowerCase().contains(query);
+    }).toList();
+
+    emit(UsersSearchSuccess(filteredUsers));
   }
 }

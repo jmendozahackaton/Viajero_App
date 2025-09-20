@@ -156,11 +156,14 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> updateUserStatus(String userId, bool isActive) async {
     try {
+      print('Actualizando usuario $userId a isActive: $isActive'); // ← DEBUG
+
       await _firestore.collection('users').doc(userId).update({
         'isActive': isActive,
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
+      print('Error actualizando estado: $e'); // ← DEBUG
       throw Exception('Error actualizando estado: $e');
     }
   }

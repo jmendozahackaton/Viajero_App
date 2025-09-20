@@ -28,6 +28,7 @@ void main() {
       updatedAt: DateTime.now(),
       fcmToken: null,
       preferences: {},
+      isActive: true,
     );
 
     when(

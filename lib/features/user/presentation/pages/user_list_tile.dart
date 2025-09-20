@@ -49,7 +49,7 @@ class UserListTile extends StatelessWidget {
             PopupMenuItem(value: 'delete', child: Text('Eliminar')),
           ],
         ),
-        onTap: () => _showUserDetails(context, user),
+        onTap: () => _showUserDetails(context, user, userBloc),
       ),
     );
   }
@@ -144,10 +144,14 @@ class UserListTile extends StatelessWidget {
     );
   }
 
-  void _showUserDetails(BuildContext context, UserEntity user) {
+  void _showUserDetails(
+    BuildContext context,
+    UserEntity user,
+    UserBloc userBloc,
+  ) {
     showDialog(
       context: context,
-      builder: (context) => UserDetailsDialog(user: user),
+      builder: (context) => UserDetailsDialog(user: user, userBloc: userBloc),
     );
   }
 }
