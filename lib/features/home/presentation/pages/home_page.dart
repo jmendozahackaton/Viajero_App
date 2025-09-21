@@ -221,12 +221,10 @@ class HomePage extends StatelessWidget {
       ),
       _buildFeatureCard(
         icon: Icons.directions_bus,
-        title: 'Ver Transportes',
+        title: 'Planificador de Viaje',
         color: Colors.green,
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Transportes en desarrollo')),
-          );
+          GoRouter.of(context).go('/trip-planner');
         },
       ),
       _buildFeatureCard(

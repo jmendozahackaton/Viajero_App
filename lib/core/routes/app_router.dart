@@ -6,6 +6,7 @@ import 'package:hackaton_app/features/auth/presentation/pages/login_page.dart';
 import 'package:hackaton_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:hackaton_app/features/home/presentation/pages/home_page.dart';
 import 'package:hackaton_app/features/transport/presentation/pages/transport_map_page.dart';
+import 'package:hackaton_app/features/trip_planner/presentation/pages/trip_planner_page.dart';
 import 'package:hackaton_app/features/user/presentation/pages/admin_users_page.dart';
 
 class AppRouter {
@@ -31,6 +32,14 @@ class AppRouter {
         path: '/transport-map',
         name: 'transport-map',
         builder: (context, state) => const TransportMapPage(),
+      ),
+      GoRoute(
+        path: '/trip-planner',
+        name: 'trip-planner',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const TripPlannerPage(),
+        ),
       ),
       GoRoute(
         path: '/home',
