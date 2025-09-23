@@ -7,6 +7,7 @@ import 'package:hackaton_app/features/trip_planner/data/mock_data/mock_trip_plan
 import 'package:hackaton_app/features/trip_planner/data/services/trip_movement_service.dart';
 import 'package:hackaton_app/features/trip_planner/domain/entities/trip_plan_entity.dart';
 import 'package:hackaton_app/features/trip_planner/domain/repositories/trip_planner_repository.dart';
+import 'package:hackaton_app/core/mock_data/mock_data_service.dart';
 
 // IMPORTAR DEPENDENCIAS EXISTENTES
 import 'package:hackaton_app/features/transport/domain/repositories/transport_repository.dart';
@@ -35,7 +36,10 @@ class TripPlannerRepositoryImpl implements TripPlannerRepository {
     LatLng destination,
     TripPreferences preferences,
   ) async {
+    await _ensureTransportDataExists();
     try {
+      print('📍 Origen: ${origin.latitude}, ${origin.longitude}');
+      print('🎯 Destino: ${destination.latitude}, ${destination.longitude}');
       // 1. Encontrar paradas cercanas al origen y destino
       final nearOrigin = await findNearbyBusStops(
         origin,
@@ -45,10 +49,11 @@ class TripPlannerRepositoryImpl implements TripPlannerRepository {
         destination,
         preferences.maxWalkingDistance / 1000,
       );
-
+      print('✅ ${nearOrigin.length} paradas cerca del origen');
+      print('✅ ${nearDestination.length} paradas cerca del destino');
       // 2. Obtener todas las rutas activas
       final allRoutes = await _transportRepository.getActiveBusRoutes();
-
+      print('✅ ${allRoutes.length} rutas encontradas');
       // 3. Algoritmo de planificación de ruta
       return _calculateRouteOptions(
         origin,
@@ -143,23 +148,87 @@ class TripPlannerRepositoryImpl implements TripPlannerRepository {
   @override
   Future<void> deleteTripPlan(String tripPlanId) async {
     try {
-      await _firestore.collection('saved_trips').doc(tripPlanId).update({
-        'isActive': false,
-        'deletedAt': FieldValue.serverTimestamp(),
-      });
+      print('🗑️ Eliminando viaje $tripPlanId de Firestore');
+
+      // Opción 1: Eliminar físicamente el documento
+      await _firestore.collection('saved_trips').doc(tripPlanId).delete();
+
+      // Opción 2: O marcar como inactivo (soft delete)
+      // await _firestore.collection('saved_trips').doc(tripPlanId).update({
+      //   'isActive': false,
+      //   'deletedAt': FieldValue.serverTimestamp(),
+      // });
+
+      print('✅ Viaje $tripPlanId eliminado correctamente');
     } catch (e) {
+      print('❌ Error eliminando viaje $tripPlanId: $e');
       throw Exception('Error deleting trip plan: $e');
     }
   }
 
   @override
   Future<void> initializeMockData() async {
+    await _initializeTransportData();
     await _mockDataService.createMockTripPlannerData();
   }
 
   @override
   Future<void> startMockMovementSimulation() async {
     _movementService.startSimulatingTripMovements();
+  }
+
+  Future<void> _initializeTransportData() async {
+    try {
+      // Verificar si ya existen datos de transporte para no duplicar
+      final routesSnapshot = await _firestore
+          .collection('bus_routes')
+          .limit(1)
+          .get();
+      final stopsSnapshot = await _firestore
+          .collection('bus_stops')
+          .limit(1)
+          .get();
+
+      if (routesSnapshot.docs.isEmpty || stopsSnapshot.docs.isEmpty) {
+        print('🚌 Cargando datos de transporte en TripPlanner...');
+
+        // Crear instancia del mock de transporte
+        final transportMockData = MockDataService(_firestore);
+        await transportMockData.createMockTransportData();
+
+        print('✅ Datos de transporte cargados exitosamente');
+      } else {
+        print('✅ Datos de transporte ya existen');
+      }
+    } catch (e) {
+      print('⚠️ Error cargando datos de transporte: $e');
+    }
+  }
+
+  Future<void> _ensureTransportDataExists() async {
+    try {
+      // Verificar si existen rutas
+      final routesExist = await _firestore
+          .collection('bus_routes')
+          .limit(1)
+          .get()
+          .then((snapshot) => snapshot.docs.isNotEmpty);
+
+      // Verificar si existen paradas
+      final stopsExist = await _firestore
+          .collection('bus_stops')
+          .limit(1)
+          .get()
+          .then((snapshot) => snapshot.docs.isNotEmpty);
+
+      if (!routesExist || !stopsExist) {
+        print('📦 Cargando datos de transporte faltantes...');
+        final transportMockData = MockDataService(_firestore);
+        await transportMockData.createMockTransportData();
+      }
+    } catch (e) {
+      print('❌ Error verificando datos de transporte: $e');
+    }
   }
 
   // ========== MÉTODOS AUXILIARES ==========
@@ -197,7 +266,7 @@ class TripPlannerRepositoryImpl implements TripPlannerRepository {
         preferences,
       );
     }
-
+    print('✅ ${options.length} opciones calculadas');
     // Aplicar preferencias y ordenar
     return _applyPreferencesAndSort(options, preferences);
   }
@@ -211,22 +280,38 @@ class TripPlannerRepositoryImpl implements TripPlannerRepository {
     List<RouteOption> options,
     TripPreferences preferences,
   ) {
+    print('🔍 Buscando rutas directas...');
+    print('   Paradas origen: ${nearOrigin.map((e) => e.name).toList()}');
+    print('   Paradas destino: ${nearDestination.map((e) => e.name).toList()}');
+
     for (final originStop in nearOrigin) {
       for (final destinationStop in nearDestination) {
         for (final route in allRoutes) {
-          if (route.busStopIds.contains(originStop.id) &&
-              route.busStopIds.contains(destinationStop.id)) {
+          final hasOriginStop = route.busStopIds.contains(originStop.id);
+          final hasDestinationStop = route.busStopIds.contains(
+            destinationStop.id,
+          );
+
+          print('   Ruta ${route.name}:');
+          print(
+            '     - Tiene parada origen (${originStop.name}): $hasOriginStop',
+          );
+          print(
+            '     - Tiene parada destino (${destinationStop.name}): $hasDestinationStop',
+          );
+          print('     - Paradas de la ruta: ${route.busStopIds}');
+
+          if (hasOriginStop && hasDestinationStop) {
             final originIndex = route.busStopIds.indexOf(originStop.id);
             final destinationIndex = route.busStopIds.indexOf(
               destinationStop.id,
             );
 
+            print(
+              '     - Índice origen: $originIndex, Índice destino: $destinationIndex',
+            );
+
             if (originIndex < destinationIndex) {
-              final busStops = _getBusStopSequence(
-                route,
-                originIndex,
-                destinationIndex,
-              );
               final walkingDistance = _calculateTotalWalkingDistance(
                 origin,
                 destination,
@@ -234,12 +319,22 @@ class TripPlannerRepositoryImpl implements TripPlannerRepository {
                 destinationStop,
               );
 
+              print('     - Distancia caminando: ${walkingDistance.round()}m');
+              print(
+                '     - Límite preferencias: ${preferences.maxWalkingDistance}m',
+              );
+
               if (walkingDistance <= preferences.maxWalkingDistance) {
+                print('     ✅ Ruta VÁLIDA agregada');
                 options.add(
                   RouteOption(
                     routeId: route.id,
                     routeName: route.name,
-                    busStopSequence: busStops,
+                    busStopSequence: _getBusStopSequence(
+                      route,
+                      originIndex,
+                      destinationIndex,
+                    ),
                     totalDistance:
                         route.distance *
                         ((destinationIndex - originIndex) /
@@ -256,12 +351,17 @@ class TripPlannerRepositoryImpl implements TripPlannerRepository {
                     sustainabilityScore: _calculateSustainabilityScore(route),
                   ),
                 );
+              } else {
+                print('     ❌ Distancia caminando excede límite');
               }
+            } else {
+              print('     ❌ Origen después del destino en la ruta');
             }
           }
         }
       }
     }
+    print('   Rutas directas encontradas: ${options.length}');
   }
 
   void _findTransferRoutes(
@@ -446,12 +546,30 @@ class TripPlannerRepositoryImpl implements TripPlannerRepository {
   }
 
   TripPlanEntity _mapToTripPlanEntity(Map<String, dynamic> data, String id) {
+    // Manejar plannedTime que puede ser null
+    DateTime plannedTime;
+    if (data['plannedTime'] != null) {
+      plannedTime = (data['plannedTime'] as Timestamp).toDate();
+    } else {
+      plannedTime = DateTime.now(); // Valor por defecto
+      print('⚠️ plannedTime es null para el viaje $id, usando fecha actual');
+    }
+
+    // Manejar createdAt que también puede ser null
+    DateTime createdAt;
+    if (data['createdAt'] != null) {
+      createdAt = (data['createdAt'] as Timestamp).toDate();
+    } else {
+      createdAt = DateTime.now();
+      print('⚠️ createdAt es null para el viaje $id, usando fecha actual');
+    }
+
     return TripPlanEntity(
       id: id,
       origin: _parseLatLng(data['origin']),
       destination: _parseLatLng(data['destination']),
-      plannedTime: (data['plannedTime'] as Timestamp).toDate(),
-      routeOptions: [], // Se podría cargar posteriormente
+      plannedTime: plannedTime,
+      routeOptions: [],
       preferences: _mapToTripPreferences(data['preferences']),
     );
   }

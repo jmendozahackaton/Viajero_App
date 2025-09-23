@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hackaton_app/features/trip_planner/domain/entities/trip_plan_entity.dart';
+import 'package:hackaton_app/features/trip_planner/domain/usecases/delete_trip_plan_usecase.dart';
 import 'package:hackaton_app/features/trip_planner/domain/usecases/get_saved_trips_usecase.dart';
 import 'package:hackaton_app/features/trip_planner/domain/usecases/plan_trip_usecase.dart';
 import 'package:hackaton_app/features/trip_planner/domain/usecases/save_trip_plan_usecase.dart';
@@ -16,15 +17,18 @@ class TripPlannerBloc extends Bloc<TripPlannerEvent, TripPlannerState> {
   final PlanTripUseCase _planTripUseCase;
   final SaveTripPlanUseCase _saveTripPlanUseCase;
   final GetSavedTripsUseCase _getSavedTripsUseCase;
+  final DeleteTripPlanUseCase _deleteTripPlanUseCase;
   StreamSubscription<List<TripPlanEntity>>? _tripsSubscription;
 
   TripPlannerBloc({
     required PlanTripUseCase planTripUseCase,
     required SaveTripPlanUseCase saveTripPlanUseCase,
     required GetSavedTripsUseCase getSavedTripsUseCase,
+    required DeleteTripPlanUseCase deleteTripPlanUseCase,
   }) : _planTripUseCase = planTripUseCase,
        _saveTripPlanUseCase = saveTripPlanUseCase,
        _getSavedTripsUseCase = getSavedTripsUseCase,
+       _deleteTripPlanUseCase = deleteTripPlanUseCase,
        super(TripPlannerState.initial()) {
     on<PlanTripEvent>(_onPlanTrip);
     on<SaveTripPlanEvent>(_onSaveTripPlan);
@@ -32,6 +36,8 @@ class TripPlannerBloc extends Bloc<TripPlannerEvent, TripPlannerState> {
     on<UpdateTripPreferencesEvent>(_onUpdatePreferences);
     on<TripsUpdatedEvent>(_onTripsUpdated);
     on<TripsLoadErrorEvent>(_onTripsLoadError);
+    on<ClearSearchEvent>(_onClearSearch);
+    on<DeleteTripPlanEvent>(_onDeleteTripPlan);
   }
 
   Future<void> _onPlanTrip(
@@ -105,7 +111,8 @@ class TripPlannerBloc extends Bloc<TripPlannerEvent, TripPlannerState> {
     LoadSavedTripsEvent event,
     Emitter<TripPlannerState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    print('🔄 Cargando viajes guardados...');
+    emit(state.copyWith(isLoading: true));
 
     // Cancelar suscripción anterior si existe
     await _tripsSubscription?.cancel();
@@ -114,28 +121,59 @@ class TripPlannerBloc extends Bloc<TripPlannerEvent, TripPlannerState> {
     try {
       _tripsSubscription = _getSavedTripsUseCase.execute().listen(
         (trips) {
+          print('📥 Viajes recibidos: ${trips.length}');
           if (!isClosed) {
             add(TripsUpdatedEvent(trips: trips));
           }
         },
         onError: (error) {
+          print('❌ Error en stream de viajes: $error');
           if (!isClosed) {
-            // Usar add en lugar de emit para evitar problemas de async
             add(TripsLoadErrorEvent(error: error.toString()));
           }
         },
         cancelOnError: false,
       );
     } catch (e) {
+      print('❌ Error iniciando carga de viajes: $e');
       if (!isClosed) {
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: 'Error al suscribirse a viajes: $e',
+            errorMessage: 'Error al cargar viajes: $e',
           ),
         );
       }
     }
+  }
+
+  Future<void> _onDeleteTripPlan(
+    DeleteTripPlanEvent event,
+    Emitter<TripPlannerState> emit,
+  ) async {
+    try {
+      print('🗑️ Eliminando viaje: ${event.tripPlanId}');
+      await _deleteTripPlanUseCase.execute(event.tripPlanId);
+      print('✅ Viaje eliminado exitosamente');
+
+      // Recargar la lista después de eliminar
+      add(LoadSavedTripsEvent());
+    } catch (e) {
+      print('❌ Error eliminando viaje: $e');
+      emit(state.copyWith(errorMessage: 'Error eliminando viaje: $e'));
+    }
+  }
+
+  void _onClearSearch(ClearSearchEvent event, Emitter<TripPlannerState> emit) {
+    emit(
+      state.copyWith(
+        routeOptions: const [],
+        selectedOrigin: null,
+        selectedDestination: null,
+        errorMessage: null,
+        successMessage: null,
+      ),
+    );
   }
 
   void _onTripsLoadError(

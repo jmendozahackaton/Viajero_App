@@ -117,12 +117,40 @@ class SavedTripsModal extends StatelessWidget {
             child: const Text('Cancelar'),
           ),
           TextButton(
-            onPressed: () {
-              // TODO: Implementar eliminación de viaje
-              Navigator.pop(context);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Viaje eliminado')));
+            onPressed: () async {
+              Navigator.pop(context); // Cerrar el diálogo primero
+
+              try {
+                // Mostrar indicador de carga
+                final scaffold = ScaffoldMessenger.of(context);
+                scaffold.showSnackBar(
+                  const SnackBar(
+                    content: Text('Eliminando viaje...'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+
+                // Ejecutar la eliminación
+                context.read<TripPlannerBloc>().add(
+                  DeleteTripPlanEvent(tripPlanId: trip.id),
+                );
+
+                // Mensaje de éxito
+                scaffold.showSnackBar(
+                  const SnackBar(
+                    content: Text('✅ Viaje eliminado correctamente'),
+                    backgroundColor: Colors.green,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('❌ Error: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
             child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
           ),

@@ -18,6 +18,17 @@ class PlanTripEvent extends TripPlannerEvent {
   List<Object> get props => [origin, destination];
 }
 
+class ClearSearchEvent extends TripPlannerEvent {}
+
+class DeleteTripPlanEvent extends TripPlannerEvent {
+  final String tripPlanId;
+
+  const DeleteTripPlanEvent({required this.tripPlanId});
+
+  @override
+  List<Object> get props => [tripPlanId];
+}
+
 class SaveTripPlanEvent extends TripPlannerEvent {
   final RouteOption selectedOption;
 

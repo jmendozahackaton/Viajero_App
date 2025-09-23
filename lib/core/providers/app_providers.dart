@@ -2,6 +2,7 @@
 import 'package:hackaton_app/domain/usecases/sign_in_usecase.dart';
 import 'package:hackaton_app/domain/usecases/sign_up_usecase.dart';
 import 'package:hackaton_app/features/auth/presentation/blocs/auth_bloc.dart';
+import 'package:hackaton_app/features/trip_planner/domain/usecases/delete_trip_plan_usecase.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -99,6 +100,11 @@ class AppProviders {
       create: (context) =>
           PlanTripUseCase(repository: context.read<TripPlannerRepository>()),
     ),
+    Provider<DeleteTripPlanUseCase>(
+      create: (context) => DeleteTripPlanUseCase(
+        repository: context.read<TripPlannerRepository>(),
+      ),
+    ),
     Provider<SaveTripPlanUseCase>(
       create: (context) => SaveTripPlanUseCase(
         repository: context.read<TripPlannerRepository>(),
@@ -130,6 +136,8 @@ class AppProviders {
         planTripUseCase: context.read<PlanTripUseCase>(),
         saveTripPlanUseCase: context.read<SaveTripPlanUseCase>(),
         getSavedTripsUseCase: context.read<GetSavedTripsUseCase>(),
+        deleteTripPlanUseCase: context
+            .read<DeleteTripPlanUseCase>(), // ← AGREGAR
       ),
     ),
   ];

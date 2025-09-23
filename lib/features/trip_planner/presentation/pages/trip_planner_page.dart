@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hackaton_app/features/trip_planner/domain/entities/trip_plan_entity.dart';
+import 'package:hackaton_app/features/trip_planner/domain/repositories/trip_planner_repository.dart';
 import 'package:hackaton_app/features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
 import 'package:hackaton_app/features/trip_planner/presentation/widgets/map_location_picker_dialog.dart';
 import 'package:hackaton_app/features/trip_planner/presentation/widgets/saved_trips_modal.dart';
@@ -42,9 +43,10 @@ class _TripPlannerPageState extends State<TripPlannerPage> {
 
     if (isDevelopment) {
       try {
-        // Inicializar datos de prueba si es necesario
-        // (Esto podría moverse al Bloc si es apropiado)
-        print('✅ Modo desarrollo activado para planificador');
+        final repository = context.read<TripPlannerRepository>();
+        await repository.initializeMockData();
+        await repository.startMockMovementSimulation();
+        print('✅ Datos de prueba del planificador creados exitosamente');
       } catch (e) {
         print('⚠️ Error en configuración de desarrollo: $e');
       }
@@ -70,6 +72,11 @@ class _TripPlannerPageState extends State<TripPlannerPage> {
             icon: const Icon(Icons.history),
             onPressed: _showSavedTrips,
             tooltip: 'Viajes guardados',
+          ),
+          IconButton(
+            icon: const Icon(Icons.clear_all),
+            onPressed: _clearSearch,
+            tooltip: 'Limpiar búsqueda',
           ),
         ],
       ),
@@ -391,5 +398,21 @@ class _TripPlannerPageState extends State<TripPlannerPage> {
       isScrollControlled: true,
       builder: (context) => const SavedTripsModal(), // ← Sin parámetros
     );
+  }
+
+  void _clearSearch() {
+    setState(() {
+      _selectedOrigin = null;
+      _selectedDestination = null;
+      _originController.clear();
+      _destinationController.clear();
+    });
+
+    // Limpiar también el estado del bloc
+    context.read<TripPlannerBloc>().add(ClearSearchEvent());
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Búsqueda limpiada')));
   }
 }
