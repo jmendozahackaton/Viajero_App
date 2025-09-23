@@ -7,6 +7,7 @@ import 'package:hackaton_app/features/trip_planner/domain/entities/trip_plan_ent
 import 'package:hackaton_app/features/trip_planner/domain/repositories/trip_planner_repository.dart';
 import 'package:hackaton_app/features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
 import 'package:hackaton_app/features/trip_planner/presentation/widgets/map_location_picker_dialog.dart';
+import 'package:hackaton_app/features/trip_planner/presentation/widgets/route_map_dialog.dart';
 import 'package:hackaton_app/features/trip_planner/presentation/widgets/saved_trips_modal.dart';
 import 'package:hackaton_app/features/trip_planner/presentation/widgets/slider_list_tile.dart';
 
@@ -312,6 +313,12 @@ class _TripPlannerPageState extends State<TripPlannerPage> {
               onPressed: () => _saveTripPlan(option),
               child: const Text('Guardar Viaje'),
             ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.map),
+              onPressed: () => _showRouteOnMap(option),
+              tooltip: 'Ver en mapa',
+            ),
           ],
         ),
       ),
@@ -352,6 +359,21 @@ class _TripPlannerPageState extends State<TripPlannerPage> {
       _originController.text = _destinationController.text;
       _destinationController.text = tempText;
     });
+  }
+
+  void _showRouteOnMap(RouteOption option) {
+    final state = context.read<TripPlannerBloc>().state;
+
+    if (state.selectedOrigin != null && state.selectedDestination != null) {
+      showDialog(
+        context: context,
+        builder: (context) => RouteMapDialog(
+          routeOption: option,
+          origin: state.selectedOrigin!,
+          destination: state.selectedDestination!,
+        ),
+      );
+    }
   }
 
   void _updatePreferences({
