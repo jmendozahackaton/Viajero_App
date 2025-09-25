@@ -158,14 +158,10 @@ class HomePage extends StatelessWidget {
       ),
       _buildFeatureCard(
         icon: Icons.directions_bus,
-        title: 'Gestión de Transportes',
+        title: 'Gestión de Rutas',
         color: Colors.orange,
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Gestión de transportes en desarrollo'),
-            ),
-          );
+          GoRouter.of(context).go('/buses');
         },
       ),
       _buildFeatureCard(

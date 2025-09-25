@@ -24,6 +24,13 @@ class AdminDashboardPage extends StatelessWidget {
         title: const Text('Panel de Administración'),
         backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.home), // ← Botón de retroceso
+          onPressed: () {
+            GoRouter.of(context).go('/home');
+          },
+          tooltip: 'Regresar al inicio',
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -55,15 +62,11 @@ class AdminDashboardPage extends StatelessWidget {
                   ),
                   _buildAdminCard(
                     icon: Icons.directions_bus,
-                    title: 'Gestión de Transportes',
+                    title: 'Gestión de Rutas',
                     subtitle: 'Administrar buses y rutas',
                     color: Colors.orange,
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Gestión de transportes en desarrollo'),
-                        ),
-                      );
+                      GoRouter.of(context).go('/buses');
                     },
                   ),
                   _buildAdminCard(

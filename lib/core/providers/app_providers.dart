@@ -2,6 +2,17 @@
 import 'package:hackaton_app/domain/usecases/sign_in_usecase.dart';
 import 'package:hackaton_app/domain/usecases/sign_up_usecase.dart';
 import 'package:hackaton_app/features/auth/presentation/blocs/auth_bloc.dart';
+import 'package:hackaton_app/features/buses/data/repositories/bus_repository_impl.dart';
+import 'package:hackaton_app/features/buses/domain/repositories/bus_repository.dart';
+import 'package:hackaton_app/features/buses/domain/usecases/assign_driver_usecase.dart';
+import 'package:hackaton_app/features/buses/domain/usecases/create_bus_usecase.dart';
+import 'package:hackaton_app/features/buses/domain/usecases/delete_bus_usecase.dart';
+import 'package:hackaton_app/features/buses/domain/usecases/get_bus_by_id_usecase.dart';
+import 'package:hackaton_app/features/buses/domain/usecases/get_buses_by_route_usecase.dart';
+import 'package:hackaton_app/features/buses/domain/usecases/get_buses_usecase.dart';
+import 'package:hackaton_app/features/buses/domain/usecases/unassign_driver_usecase.dart';
+import 'package:hackaton_app/features/buses/domain/usecases/update_bus_usecase.dart';
+import 'package:hackaton_app/features/buses/presentation/bloc/bus_management_bloc.dart';
 import 'package:hackaton_app/features/trip_planner/domain/usecases/delete_trip_plan_usecase.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -64,6 +75,13 @@ class AppProviders {
       ),
     ),
 
+    Provider<BusRepository>(
+      create: (context) => BusRepositoryImpl(
+        context.read<FirebaseFirestore>(),
+        context.read<UserRepository>(),
+      ),
+    ),
+
     // ========== CASOS DE USO (Tercero - ¡ANTES de los Blocs!) ==========
     // Casos de Uso de Auth/User
     Provider<GetCurrentUserUseCase>(
@@ -116,6 +134,36 @@ class AppProviders {
       ),
     ),
 
+    // Casos de uso de buses
+    Provider<GetBusesUseCase>(
+      create: (context) => GetBusesUseCase(context.read<BusRepository>()),
+    ),
+    Provider<GetBusByIdUseCase>(
+      create: (context) => GetBusByIdUseCase(context.read<BusRepository>()),
+    ),
+    Provider<CreateBusUseCase>(
+      create: (context) => CreateBusUseCase(context.read<BusRepository>()),
+    ),
+    Provider<UpdateBusUseCase>(
+      create: (context) => UpdateBusUseCase(context.read<BusRepository>()),
+    ),
+    Provider<DeleteBusUseCase>(
+      create: (context) => DeleteBusUseCase(context.read<BusRepository>()),
+    ),
+    Provider<GetBusesByRouteUseCase>(
+      create: (context) =>
+          GetBusesByRouteUseCase(context.read<BusRepository>()),
+    ),
+    Provider<AssignDriverUseCase>(
+      create: (context) => AssignDriverUseCase(
+        context.read<BusRepository>(),
+        context.read<UserRepository>(),
+      ),
+    ),
+    Provider<UnassignDriverUseCase>(
+      create: (context) => UnassignDriverUseCase(context.read<BusRepository>()),
+    ),
+
     // ========== BLOCS (Cuarto - ÚLTIMO) ==========
     BlocProvider<AuthBloc>(
       create: (context) => AuthBloc(
@@ -138,6 +186,20 @@ class AppProviders {
         getSavedTripsUseCase: context.read<GetSavedTripsUseCase>(),
         deleteTripPlanUseCase: context
             .read<DeleteTripPlanUseCase>(), // ← AGREGAR
+      ),
+    ),
+
+    // BLoC de buses
+    BlocProvider<BusManagementBloc>(
+      create: (context) => BusManagementBloc(
+        getBusesUseCase: context.read<GetBusesUseCase>(),
+        getBusByIdUseCase: context.read<GetBusByIdUseCase>(),
+        createBusUseCase: context.read<CreateBusUseCase>(),
+        updateBusUseCase: context.read<UpdateBusUseCase>(),
+        deleteBusUseCase: context.read<DeleteBusUseCase>(),
+        getBusesByRouteUseCase: context.read<GetBusesByRouteUseCase>(),
+        assignDriverUseCase: context.read<AssignDriverUseCase>(),
+        unassignDriverUseCase: context.read<UnassignDriverUseCase>(),
       ),
     ),
   ];

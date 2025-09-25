@@ -4,6 +4,9 @@ import 'package:hackaton_app/features/admin_panel/presentation/pages/admin_dashb
 import 'package:hackaton_app/features/auth/presentation/pages/splash_page.dart';
 import 'package:hackaton_app/features/auth/presentation/pages/login_page.dart';
 import 'package:hackaton_app/features/auth/presentation/pages/signup_page.dart';
+import 'package:hackaton_app/features/buses/presentation/pages/bus_details_page.dart';
+import 'package:hackaton_app/features/buses/presentation/pages/bus_form_page.dart';
+import 'package:hackaton_app/features/buses/presentation/pages/buses_list_page.dart';
 import 'package:hackaton_app/features/home/presentation/pages/home_page.dart';
 import 'package:hackaton_app/features/transport/presentation/pages/transport_map_page.dart';
 import 'package:hackaton_app/features/trip_planner/presentation/pages/trip_planner_page.dart';
@@ -36,10 +39,8 @@ class AppRouter {
       GoRoute(
         path: '/trip-planner',
         name: 'trip-planner',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const TripPlannerPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage(key: state.pageKey, child: const TripPlannerPage()),
       ),
       GoRoute(
         path: '/home',
@@ -53,6 +54,29 @@ class AppRouter {
       GoRoute(
         path: '/admin/dashboard',
         builder: (context, state) => const AdminDashboardPage(),
+      ),
+      GoRoute(
+        path: '/buses',
+        name: 'buses',
+        pageBuilder: (context, state) =>
+            MaterialPage(key: state.pageKey, child: const BusesListPage()),
+      ),
+      GoRoute(
+        path: '/buses/new',
+        name: 'buses-new',
+        pageBuilder: (context, state) =>
+            MaterialPage(key: state.pageKey, child: const BusFormPage()),
+      ),
+      GoRoute(
+        path: '/buses/:busId',
+        name: 'buses-details',
+        pageBuilder: (context, state) {
+          final busId = state.pathParameters['busId']!;
+          return MaterialPage(
+            key: state.pageKey,
+            child: BusDetailsPage(busId: busId),
+          );
+        },
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
