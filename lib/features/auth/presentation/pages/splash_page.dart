@@ -10,10 +10,34 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> {
+class _SplashPageState extends State<SplashPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+
   @override
   void initState() {
     super.initState();
+
+    // Animación de 2 segundos
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    _controller.forward();
+
     _checkAuthStatus();
   }
 
@@ -21,10 +45,9 @@ class _SplashPageState extends State<SplashPage> {
     final authRepository = context.read<AuthRepository>();
     final currentUser = authRepository.currentUser;
 
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 5));
 
     if (currentUser != null) {
-      // Usar GoRouter para navegación
       GoRouter.of(context).go('/home');
     } else {
       GoRouter.of(context).go('/login');
@@ -32,33 +55,28 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: const Color(0xFF0342c3), // Fondo azul personalizado
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.directions_bus, size: 80, color: Colors.white),
-            const SizedBox(height: 20),
-            Text(
-              'Viajero App',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: Image.asset(
+              'assets/icons/logo.png',
+              width: screenWidth * 1, // 60% del ancho de pantalla
+              fit: BoxFit.contain,
             ),
-            const SizedBox(height: 10),
-            Text(
-              'Transporte público inteligente',
-              style: TextStyle(fontSize: 16, color: Colors.white70),
-            ),
-            const SizedBox(height: 30),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -17,35 +16,30 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-  StreamSubscription?
-  _authBlocSubscription; // ✅ Guardar referencia al subscription
+  StreamSubscription? _authBlocSubscription;
+
+  static const Color primaryColor = Color(0xFF0342c3);
 
   @override
   void initState() {
     super.initState();
-    // Forzar verificación de autenticación cuando la página se carga
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authBloc = context.read<AuthBloc>();
       authBloc.add(AuthCheckRequested());
     });
-
     _setupBlocListener();
   }
 
   void _setupBlocListener() {
     final authBloc = context.read<AuthBloc>();
 
-    // Escuchar cambios de estado del BLoC y guardar la referencia
     _authBlocSubscription = authBloc.stream.listen((state) {
-      if (!mounted)
-        return; // ✅ Verificación CRUCIAL antes de cualquier operación
+      if (!mounted) return;
 
       if (state is AuthAuthenticated) {
-        // Login exitoso, navegar al home
         GoRouter.of(context).go('/home');
         setState(() => _isLoading = false);
       } else if (state is AuthError) {
-        // Mostrar error
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -85,26 +79,39 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Logo
-                Icon(
-                  Icons.directions_bus,
-                  size: 80,
-                  color: Theme.of(context).primaryColor,
+                Image.asset(
+                  'assets/icons/logo2.png',
+                  width: MediaQuery.of(context).size.width * 0.35,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 20),
+
+                // Textos de bienvenida
                 Text(
-                  'Bienvenido a Viajero App',
-                  style: TextStyle(
-                    fontSize: 24,
+                  'Bienvenido a Viajeros',
+                  style: const TextStyle(
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
+                    color: Color(0xFF00236A),
                   ),
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
+                Text(
+                  'Tu forma de llegar, en tiempo real.',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF00236A),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
                 Text(
                   'Inicia sesión para continuar',
                   style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 10),
 
                 // Formulario
                 Form(
@@ -113,10 +120,25 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       TextFormField(
                         controller: _emailController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Correo electrónico',
-                          prefixIcon: Icon(Icons.email),
-                          border: OutlineInputBorder(),
+                          labelStyle: const TextStyle(
+                            color: Color.fromARGB(255, 127, 127, 128),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.email,
+                            color: Color(0xFF00236A),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF00236A),
+                              width: 2,
+                            ),
+                          ),
                         ),
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
@@ -132,10 +154,25 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: _passwordController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Contraseña',
-                          prefixIcon: Icon(Icons.lock),
-                          border: OutlineInputBorder(),
+                          labelStyle: const TextStyle(
+                            color: Color.fromARGB(255, 127, 127, 128),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.lock,
+                            color: Color(0xFF00236A),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF00236A),
+                              width: 2,
+                            ),
+                          ),
                         ),
                         obscureText: true,
                         validator: (value) {
@@ -156,9 +193,15 @@ class _LoginPageState extends State<LoginPage> {
 
                 // Botón de login
                 SizedBox(
-                  width: double.infinity,
+                  width: 250,
                   height: 50,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 236, 236, 236),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
                     onPressed: _isLoading ? null : _signIn,
                     child: _isLoading
                         ? const CircularProgressIndicator(
@@ -166,7 +209,10 @@ class _LoginPageState extends State<LoginPage> {
                               Colors.white,
                             ),
                           )
-                        : const Text('Iniciar Sesión'),
+                        : const Text(
+                            'Iniciar Sesión',
+                            style: TextStyle(fontSize: 18),
+                          ),
                   ),
                 ),
 
@@ -175,7 +221,10 @@ class _LoginPageState extends State<LoginPage> {
                 // Enlace a registro
                 TextButton(
                   onPressed: _isLoading ? null : _navigateToSignUp,
-                  child: const Text('¿No tienes cuenta? Regístrate aquí'),
+                  child: const Text(
+                    '¿No tienes cuenta? Regístrate aquí',
+                    style: TextStyle(color: Color(0xFF00236A)),
+                  ),
                 ),
               ],
             ),
@@ -189,8 +238,7 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _authBlocSubscription
-        ?.cancel(); // ✅ Cancelar subscription al destruir el widget
+    _authBlocSubscription?.cancel();
     super.dispose();
   }
 }
