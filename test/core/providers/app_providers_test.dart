@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:hackaton_app/core/providers/app_providers.dart';
-import 'package:hackaton_app/domain/repositories/user_repository.dart';
-import 'package:hackaton_app/domain/usecases/get_current_user_usecase.dart';
+import 'package:Viajeros/core/providers/app_providers.dart';
+import 'package:Viajeros/domain/repositories/user_repository.dart';
+import 'package:Viajeros/domain/usecases/get_current_user_usecase.dart';
 
 void main() {
   test('AppProviders should provide all dependencies', () {

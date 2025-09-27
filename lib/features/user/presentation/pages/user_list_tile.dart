@@ -1,9 +1,9 @@
 // user_list_tile.dart
 import 'package:flutter/material.dart';
-import 'package:hackaton_app/domain/entities/user_entity.dart';
-import 'package:hackaton_app/features/user/presentation/bloc/user_bloc.dart';
-import 'package:hackaton_app/features/user/presentation/pages/edit_user_dialog.dart';
-import 'package:hackaton_app/features/user/presentation/pages/user_details_dialog.dart';
+import 'package:Viajeros/domain/entities/user_entity.dart';
+import 'package:Viajeros/features/user/presentation/bloc/user_bloc.dart';
+import 'package:Viajeros/features/user/presentation/pages/edit_user_dialog.dart';
+import 'package:Viajeros/features/user/presentation/pages/user_details_dialog.dart';
 
 class UserListTile extends StatelessWidget {
   final UserEntity user;

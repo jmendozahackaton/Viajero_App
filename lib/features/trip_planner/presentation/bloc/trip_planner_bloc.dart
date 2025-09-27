@@ -4,11 +4,11 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/features/trip_planner/domain/entities/trip_plan_entity.dart';
-import 'package:hackaton_app/features/trip_planner/domain/usecases/delete_trip_plan_usecase.dart';
-import 'package:hackaton_app/features/trip_planner/domain/usecases/get_saved_trips_usecase.dart';
-import 'package:hackaton_app/features/trip_planner/domain/usecases/plan_trip_usecase.dart';
-import 'package:hackaton_app/features/trip_planner/domain/usecases/save_trip_plan_usecase.dart';
+import 'package:Viajeros/features/trip_planner/domain/entities/trip_plan_entity.dart';
+import 'package:Viajeros/features/trip_planner/domain/usecases/delete_trip_plan_usecase.dart';
+import 'package:Viajeros/features/trip_planner/domain/usecases/get_saved_trips_usecase.dart';
+import 'package:Viajeros/features/trip_planner/domain/usecases/plan_trip_usecase.dart';
+import 'package:Viajeros/features/trip_planner/domain/usecases/save_trip_plan_usecase.dart';
 
 part 'trip_planner_event.dart';
 part 'trip_planner_state.dart';

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/domain/repositories/user_repository.dart';
+import 'package:Viajeros/domain/repositories/user_repository.dart';
 import '../../domain/entities/bus_entity.dart';
 import '../../domain/entities/bus_driver_entity.dart';
 import '../../domain/repositories/bus_repository.dart';

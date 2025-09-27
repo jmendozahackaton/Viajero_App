@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hackaton_app/domain/usecases/get_current_user_usecase.dart';
+import 'package:Viajeros/domain/usecases/get_current_user_usecase.dart';
 
 class DependencyTestWidget extends StatelessWidget {
   const DependencyTestWidget({super.key});

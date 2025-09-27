@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hackaton_app/domain/repositories/auth_repository.dart';
-import 'package:hackaton_app/domain/repositories/user_repository.dart';
-import 'package:hackaton_app/domain/entities/user_entity.dart';
+import 'package:Viajeros/domain/repositories/auth_repository.dart';
+import 'package:Viajeros/domain/repositories/user_repository.dart';
+import 'package:Viajeros/domain/entities/user_entity.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

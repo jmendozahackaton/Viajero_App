@@ -1,9 +1,9 @@
 // lib/features/trip_planner/presentation/widgets/route_map_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/features/transport/domain/entities/bus_stop_entity.dart';
-import 'package:hackaton_app/features/trip_planner/domain/entities/trip_plan_entity.dart';
-import 'package:hackaton_app/features/transport/domain/entities/route_entity.dart';
+import 'package:Viajeros/features/transport/domain/entities/bus_stop_entity.dart';
+import 'package:Viajeros/features/trip_planner/domain/entities/trip_plan_entity.dart';
+import 'package:Viajeros/features/transport/domain/entities/route_entity.dart';
 
 class RouteMapDialog extends StatelessWidget {
   final RouteOption routeOption;

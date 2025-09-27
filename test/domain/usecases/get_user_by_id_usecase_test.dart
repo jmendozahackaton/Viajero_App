@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:hackaton_app/domain/usecases/get_user_by_id_usecase.dart';
-import 'package:hackaton_app/domain/repositories/user_repository.dart';
-import 'package:hackaton_app/domain/entities/user_entity.dart';
+import 'package:Viajeros/domain/usecases/get_user_by_id_usecase.dart';
+import 'package:Viajeros/domain/repositories/user_repository.dart';
+import 'package:Viajeros/domain/entities/user_entity.dart';
 
 class MockUserRepository extends Mock implements UserRepository {}
 

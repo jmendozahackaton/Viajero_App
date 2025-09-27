@@ -1,7 +1,7 @@
 // admin_dashboard_page.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hackaton_app/features/auth/presentation/blocs/auth_bloc.dart';
+import 'package:Viajeros/features/auth/presentation/blocs/auth_bloc.dart';
 import 'package:provider/provider.dart';
 
 class AdminDashboardPage extends StatelessWidget {

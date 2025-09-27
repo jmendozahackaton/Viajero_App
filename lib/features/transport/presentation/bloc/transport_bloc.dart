@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
-import 'package:hackaton_app/features/transport/domain/repositories/transport_repository.dart';
-import 'package:hackaton_app/features/transport/domain/entities/route_entity.dart';
-import 'package:hackaton_app/features/transport/domain/entities/bus_entity.dart';
-import 'package:hackaton_app/features/transport/domain/entities/bus_stop_entity.dart';
+import 'package:Viajeros/features/transport/domain/repositories/transport_repository.dart';
+import 'package:Viajeros/features/transport/domain/entities/route_entity.dart';
+import 'package:Viajeros/features/transport/domain/entities/bus_entity.dart';
+import 'package:Viajeros/features/transport/domain/entities/bus_stop_entity.dart';
 
 part 'transport_event.dart';
 part 'transport_state.dart';

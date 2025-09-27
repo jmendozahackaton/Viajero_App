@@ -3,16 +3,16 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/features/trip_planner/data/mock_data/mock_trip_planner_data.dart';
-import 'package:hackaton_app/features/trip_planner/data/services/trip_movement_service.dart';
-import 'package:hackaton_app/features/trip_planner/domain/entities/trip_plan_entity.dart';
-import 'package:hackaton_app/features/trip_planner/domain/repositories/trip_planner_repository.dart';
-import 'package:hackaton_app/core/mock_data/mock_data_service.dart';
+import 'package:Viajeros/features/trip_planner/data/mock_data/mock_trip_planner_data.dart';
+import 'package:Viajeros/features/trip_planner/data/services/trip_movement_service.dart';
+import 'package:Viajeros/features/trip_planner/domain/entities/trip_plan_entity.dart';
+import 'package:Viajeros/features/trip_planner/domain/repositories/trip_planner_repository.dart';
+import 'package:Viajeros/core/mock_data/mock_data_service.dart';
 
 // IMPORTAR DEPENDENCIAS EXISTENTES
-import 'package:hackaton_app/features/transport/domain/repositories/transport_repository.dart';
-import 'package:hackaton_app/features/transport/domain/entities/route_entity.dart';
-import 'package:hackaton_app/features/transport/domain/entities/bus_stop_entity.dart';
+import 'package:Viajeros/features/transport/domain/repositories/transport_repository.dart';
+import 'package:Viajeros/features/transport/domain/entities/route_entity.dart';
+import 'package:Viajeros/features/transport/domain/entities/bus_stop_entity.dart';
 
 class TripPlannerRepositoryImpl implements TripPlannerRepository {
   final FirebaseFirestore _firestore;

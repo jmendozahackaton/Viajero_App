@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/core/services/geolocation_service.dart';
+import 'package:Viajeros/core/services/geolocation_service.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hackaton_app/features/transport/domain/repositories/transport_repository.dart';
-import 'package:hackaton_app/features/transport/domain/entities/route_entity.dart';
-import 'package:hackaton_app/features/transport/domain/entities/bus_entity.dart';
-import 'package:hackaton_app/features/transport/domain/entities/bus_stop_entity.dart';
+import 'package:Viajeros/features/transport/domain/repositories/transport_repository.dart';
+import 'package:Viajeros/features/transport/domain/entities/route_entity.dart';
+import 'package:Viajeros/features/transport/domain/entities/bus_entity.dart';
+import 'package:Viajeros/features/transport/domain/entities/bus_stop_entity.dart';
 
 class TransportRepositoryImpl implements TransportRepository {
   final FirebaseFirestore _firestore;

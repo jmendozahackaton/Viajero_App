@@ -1,4 +1,4 @@
-import 'package:hackaton_app/features/trip_planner/domain/repositories/trip_planner_repository.dart';
+import 'package:Viajeros/features/trip_planner/domain/repositories/trip_planner_repository.dart';
 
 class DeleteTripPlanUseCase {
   final TripPlannerRepository repository;

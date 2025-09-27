@@ -1,10 +1,10 @@
 // bus_proximity_monitor.dart
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/core/services/notifications_service.dart';
-import 'package:hackaton_app/domain/entities/notification_preferences_entity.dart';
-import 'package:hackaton_app/features/transport/domain/entities/bus_entity.dart';
-import 'package:hackaton_app/features/transport/domain/repositories/transport_repository.dart';
+import 'package:Viajeros/core/services/notifications_service.dart';
+import 'package:Viajeros/domain/entities/notification_preferences_entity.dart';
+import 'package:Viajeros/features/transport/domain/entities/bus_entity.dart';
+import 'package:Viajeros/features/transport/domain/repositories/transport_repository.dart';
 
 class BusProximityMonitor {
   final TransportRepository transportRepository;

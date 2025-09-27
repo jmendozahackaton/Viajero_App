@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hackaton_app/data/models/user_model.dart';
+import 'package:Viajeros/data/models/user_model.dart';
 
 void main() {
   group('UserModel Tests', () {

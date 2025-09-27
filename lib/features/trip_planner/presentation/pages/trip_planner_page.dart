@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/features/trip_planner/domain/entities/trip_plan_entity.dart';
-import 'package:hackaton_app/features/trip_planner/domain/repositories/trip_planner_repository.dart';
-import 'package:hackaton_app/features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
-import 'package:hackaton_app/features/trip_planner/presentation/widgets/map_location_picker_dialog.dart';
-import 'package:hackaton_app/features/trip_planner/presentation/widgets/route_map_dialog.dart';
-import 'package:hackaton_app/features/trip_planner/presentation/widgets/saved_trips_modal.dart';
-import 'package:hackaton_app/features/trip_planner/presentation/widgets/slider_list_tile.dart';
+import 'package:Viajeros/features/trip_planner/domain/entities/trip_plan_entity.dart';
+import 'package:Viajeros/features/trip_planner/domain/repositories/trip_planner_repository.dart';
+import 'package:Viajeros/features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
+import 'package:Viajeros/features/trip_planner/presentation/widgets/map_location_picker_dialog.dart';
+import 'package:Viajeros/features/trip_planner/presentation/widgets/route_map_dialog.dart';
+import 'package:Viajeros/features/trip_planner/presentation/widgets/saved_trips_modal.dart';
+import 'package:Viajeros/features/trip_planner/presentation/widgets/slider_list_tile.dart';
 
 class TripPlannerPage extends StatefulWidget {
   const TripPlannerPage({super.key});

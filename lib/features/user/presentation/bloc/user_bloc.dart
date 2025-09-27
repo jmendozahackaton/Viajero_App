@@ -1,6 +1,6 @@
 // user_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hackaton_app/domain/repositories/user_repository.dart';
+import 'package:Viajeros/domain/repositories/user_repository.dart';
 
 import '../../../../domain/entities/user_entity.dart';
 

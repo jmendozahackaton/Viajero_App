@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/features/trip_planner/domain/entities/trip_plan_entity.dart';
-import 'package:hackaton_app/features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
+import 'package:Viajeros/features/trip_planner/domain/entities/trip_plan_entity.dart';
+import 'package:Viajeros/features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
 
 class SavedTripsModal extends StatelessWidget {
   const SavedTripsModal({super.key});

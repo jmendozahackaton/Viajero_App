@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/core/services/notifications_service.dart';
+import 'package:Viajeros/core/services/notifications_service.dart';
 
 class BusMovementService {
   final FirebaseFirestore _firestore;

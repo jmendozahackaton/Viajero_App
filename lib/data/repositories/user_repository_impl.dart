@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hackaton_app/data/models/user_model.dart';
-import 'package:hackaton_app/data/models/user_model_extension.dart';
-import 'package:hackaton_app/domain/entities/user_entity.dart';
-import 'package:hackaton_app/domain/repositories/user_repository.dart';
+import 'package:Viajeros/data/models/user_model.dart';
+import 'package:Viajeros/data/models/user_model_extension.dart';
+import 'package:Viajeros/domain/entities/user_entity.dart';
+import 'package:Viajeros/domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final FirebaseFirestore _firestore;

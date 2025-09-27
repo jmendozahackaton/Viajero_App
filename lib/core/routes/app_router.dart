@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hackaton_app/features/admin_panel/presentation/pages/admin_dashboard_page.dart';
-import 'package:hackaton_app/features/auth/presentation/pages/splash_page.dart';
-import 'package:hackaton_app/features/auth/presentation/pages/login_page.dart';
-import 'package:hackaton_app/features/auth/presentation/pages/signup_page.dart';
-import 'package:hackaton_app/features/buses/presentation/pages/bus_details_page.dart';
-import 'package:hackaton_app/features/buses/presentation/pages/bus_form_page.dart';
-import 'package:hackaton_app/features/buses/presentation/pages/buses_list_page.dart';
-import 'package:hackaton_app/features/home/presentation/pages/home_page.dart';
-import 'package:hackaton_app/features/transport/presentation/pages/transport_map_page.dart';
-import 'package:hackaton_app/features/trip_planner/presentation/pages/trip_planner_page.dart';
-import 'package:hackaton_app/features/user/presentation/pages/admin_users_page.dart';
+import 'package:Viajeros/features/admin_panel/presentation/pages/admin_dashboard_page.dart';
+import 'package:Viajeros/features/auth/presentation/pages/splash_page.dart';
+import 'package:Viajeros/features/auth/presentation/pages/login_page.dart';
+import 'package:Viajeros/features/auth/presentation/pages/signup_page.dart';
+import 'package:Viajeros/features/buses/presentation/pages/bus_details_page.dart';
+import 'package:Viajeros/features/buses/presentation/pages/bus_form_page.dart';
+import 'package:Viajeros/features/buses/presentation/pages/buses_list_page.dart';
+import 'package:Viajeros/features/home/presentation/pages/home_page.dart';
+import 'package:Viajeros/features/transport/presentation/pages/transport_map_page.dart';
+import 'package:Viajeros/features/trip_planner/presentation/pages/trip_planner_page.dart';
+import 'package:Viajeros/features/user/presentation/pages/admin_users_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(

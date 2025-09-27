@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hackaton_app/domain/repositories/user_repository.dart';
-import 'package:hackaton_app/features/auth/presentation/blocs/auth_bloc.dart';
-import 'package:hackaton_app/features/user/presentation/bloc/user_bloc.dart';
-import 'package:hackaton_app/features/user/presentation/pages/users_list_view.dart';
+import 'package:Viajeros/domain/repositories/user_repository.dart';
+import 'package:Viajeros/features/auth/presentation/blocs/auth_bloc.dart';
+import 'package:Viajeros/features/user/presentation/bloc/user_bloc.dart';
+import 'package:Viajeros/features/user/presentation/pages/users_list_view.dart';
 
 class AdminUsersPage extends StatelessWidget {
   const AdminUsersPage({super.key});

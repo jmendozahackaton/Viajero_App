@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:hackaton_app/data/datasources/firebase_options.dart'; // Importa las opciones
+import '../../data/datasources/firebase_options.dart';
 
 class FirebaseService {
   static Future<void> initialize() async {

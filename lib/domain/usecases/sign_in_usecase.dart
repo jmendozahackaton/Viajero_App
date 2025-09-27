@@ -1,5 +1,5 @@
-import 'package:hackaton_app/domain/repositories/auth_repository.dart';
-import 'package:hackaton_app/domain/entities/user_entity.dart';
+import 'package:Viajeros/domain/repositories/auth_repository.dart';
+import 'package:Viajeros/domain/entities/user_entity.dart';
 
 class SignInUseCase {
   final AuthRepository authRepository;

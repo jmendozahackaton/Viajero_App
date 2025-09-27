@@ -1,5 +1,5 @@
-import 'package:hackaton_app/data/models/user_model.dart';
-import 'package:hackaton_app/domain/entities/user_entity.dart';
+import 'package:Viajeros/data/models/user_model.dart';
+import 'package:Viajeros/domain/entities/user_entity.dart';
 
 extension UserModelExtension on UserModel {
   UserEntity toEntity() {

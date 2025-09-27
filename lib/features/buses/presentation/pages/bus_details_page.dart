@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hackaton_app/features/buses/domain/entities/bus_entity.dart';
-import 'package:hackaton_app/features/buses/presentation/pages/bus_form_page.dart';
+import 'package:Viajeros/features/buses/domain/entities/bus_entity.dart';
+import 'package:Viajeros/features/buses/presentation/pages/bus_form_page.dart';
 import '../bloc/bus_management_bloc.dart';
 import '../widgets/driver_selection_dialog.dart';
 import 'driver_assignment_page.dart';

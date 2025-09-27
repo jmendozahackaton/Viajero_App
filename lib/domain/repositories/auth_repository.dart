@@ -1,4 +1,4 @@
-import 'package:hackaton_app/domain/entities/user_entity.dart';
+import 'package:Viajeros/domain/entities/user_entity.dart';
 
 abstract class AuthRepository {
   // Registro de usuario
