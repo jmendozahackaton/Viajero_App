@@ -27,8 +27,8 @@ flowchart TD
     L --> O[Mapa Tiempo Real]
     M --> P[Gestión de Bus]
     N --> Q[Panel Administrativo]
+``` 
 
-    
 ### 🗺️ Flujo de Planificación de Viajes
 ```mermaid
 flowchart TD
@@ -52,7 +52,7 @@ flowchart TD
     M --> N[Mostrar detalles completos<br>y mapa de ruta]
     N --> O[Opción guardar viaje]
     O --> P[Persistir en Firestore]
-
+``` 
 
 ### 📍 Flujo de Monitoreo en Tiempo Real
 ```mermaid
@@ -75,9 +75,9 @@ flowchart LR
     
     I --> J[Notificaciones Push<br>si bus cercano]
     J --> K[UI Reactiva<br>actualiza interfaz]
+``` 
 
-
-⚙️ Flujo CRUD Administrativo - Gestión de Buses
+### ⚙️ Flujo CRUD Administrativo - Gestión de Buses
 ```mermaid
 flowchart TD
     A[Admin: Gestión de Buses] --> B{Acción a realizar}
@@ -105,9 +105,9 @@ flowchart TD
     F --> R[Actualizar UI<br>y mostrar confirmación]
     L --> R
     Q --> R
+``` 
 
-
-🔔 Flujo de Notificaciones Push
+### 🔔 Flujo de Notificaciones Push
 ```mermaid
 flowchart TD
     A[Evento disparador] --> B{¿Tipo de evento?}
@@ -133,9 +133,9 @@ flowchart TD
     N --> O{Abrir notificación?}
     O -->|Sí| P[Navegar a app<br>pantalla relevante]
     O -->|No| Q[Notificación en bandeja]
+``` 
 
-
-🏗️ Arquitectura General del Sistema
+### 🏗️ Arquitectura General del Sistema
 ```mermaid
 graph TB
     subgraph Capa de Presentación
@@ -167,3 +167,4 @@ graph TB
     I --> K
     J --> M
     J --> O
+``` 
