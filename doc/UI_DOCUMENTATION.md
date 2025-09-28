@@ -28,7 +28,7 @@ Estado: ✅ Funcionales y Integradas
 
 ## 🏠 Home Page - Dashboard Principal
 📱 Vista Previa
-https://via.placeholder.com/300x600/4F46E5/FFFFFF?text=Home+Dashboard
+https://drive.google.com/file/d/1-CpG6slL8_fJi0pstXOnZySVZPZOneXZ/view?usp=sharing
 Pantalla principal de la aplicación después del login
 
 🎯 Funcionalidad Principal
