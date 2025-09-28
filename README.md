@@ -63,25 +63,25 @@
 
 ### 🏛️ Clean Architecture Implementada
 
-lib/
-├── core/ # Componentes transversales
-│ ├── constants/ # Constantes de la aplicación
-│ ├── routes/ # Navegación (GoRouter)
-│ ├── providers/ # Inyección de dependencias
-│ └── utils/ # Utilidades compartidas
-├── domain/ # Lógica de negocio
-│ ├── entities/ # Entidades de dominio
-│ ├── repositories/# Contratos abstractos
-│ └── usecases/ # Casos de uso específicos
-├── data/ # Acceso a datos
-│ ├── models/ # Modelos de datos
-│ └── repositories/# Implementación de repositorios
-└── features/ # Características específicas
-├── auth/ # Autenticación
-├── buses/ # Gestión de buses
-├── routes/ # Gestión de rutas
-├── trips/ # Planificación de viajes
-└── admin/ # Panel administrativo
+# lib/
+# ├── core/ # Componentes transversales
+# │ ├── constants/ # Constantes de la aplicación
+# │ ├── routes/ # Navegación (GoRouter)
+# │ ├── providers/ # Inyección de dependencias
+# │ └── utils/ # Utilidades compartidas
+# ├── domain/ # Lógica de negocio
+# │ ├── entities/ # Entidades de dominio
+# │ ├── repositories/# Contratos abstractos
+# │ └── usecases/ # Casos de uso específicos
+# ├── data/ # Acceso a datos
+# │ ├── models/ # Modelos de datos
+# │ └── repositories/# Implementación de repositorios
+# └── features/ # Características específicas
+# ├── auth/ # Autenticación
+# ├── buses/ # Gestión de buses
+# ├── routes/ # Gestión de rutas
+# ├── trips/ # Planificación de viajes
+# └── admin/ # Panel administrativo
 
 ### 🔄 Flujo de Datos
 1. **Presentación** → Widgets y BLoC
@@ -180,6 +180,7 @@ Módulo Administrativo
 
 ✅ Sistema de reportes automáticos
 
+
 ## 🛠️ Tecnologías Utilizadas
 Frontend
 
@@ -219,27 +220,27 @@ Mockito - Testing unitario
 
 ## 🏛️ Estructura del Proyecto
 
-lib/
-├── core/
-│   ├── constants/      # AppConstants, RouteNames
-│   ├── routes/         # AppRouter, RouteGuard
-│   ├── providers/      # Dependency Injection
-│   ├── utils/          # Helpers, Validators
-│   └── widgets/        # Componentes reutilizables
-├── domain/
-│   ├── entities/       # UserEntity, BusEntity, RouteEntity
-│   ├── repositories/   # Abstract repos
-│   └── usecases/       # Business logic
-├── data/
-│   ├── models/         # Data models
-│   └── repositories/   # Concrete implementations
-└── features/
-    ├── auth/           # Authentication flow
-    ├── buses/          # Bus management
-    ├── routes/         # Route management
-    ├── trips/          # Trip planning
-    ├── admin/          # Admin dashboard
-    └── map/            # Interactive map
+# lib/
+# ├── core/
+# │   ├── constants/      # AppConstants, RouteNames
+# │   ├── routes/         # AppRouter, RouteGuard
+# │   ├── providers/      # Dependency Injection
+# │   ├── utils/          # Helpers, Validators
+# │   └── widgets/        # Componentes reutilizables
+# ├── domain/
+# │   ├── entities/       # UserEntity, BusEntity, RouteEntity
+# │   ├── repositories/   # Abstract repos
+# │   └── usecases/       # Business logic
+# ├── data/
+# │   ├── models/         # Data models
+# │   └── repositories/   # Concrete implementations
+# └── features/
+#     ├── auth/           # Authentication flow
+#     ├── buses/          # Bus management
+#     ├── routes/         # Route management
+#     ├── trips/          # Trip planning
+#     ├── admin/          # Admin dashboard
+ #    └── map/            # Interactive map
 
 ## 👥 Roles de Usuario
 👤 Pasajero (Usuario Regular)
