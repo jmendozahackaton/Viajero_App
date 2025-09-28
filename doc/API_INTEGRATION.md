@@ -63,7 +63,7 @@ lib/
 │   │   └── presentation/bloc/map_bloc.dart
 │   └── trips/
 │       └── domain/usecases/plan_trip_usecase.dart
-
+```
 
 ## 🔥 Integración Firebase Implementada
 **📊 Firebase Firestore - Estructura Real de Datos**
