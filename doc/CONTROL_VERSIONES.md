@@ -274,7 +274,7 @@ bash
 # Análisis del historial de commits
 git shortlog -sn    # Contribuidores por commits
 git log --oneline | wc -l    # Total commits
-git log --since="2024-01-01" --until="2024-12-31" --oneline | wc -l
+git log --since="2025-09-15" --until="2025-09-29" --oneline | wc -l
 ```
 
 Métricas de Código
@@ -370,13 +370,13 @@ jobs:
 
 ## ✅ Cumplimiento de Requisitos del Entregable
 
-Requisito	Cumplimiento	Evidencia
+R~~equisito	Cumplimiento	Evidencia
 
 Uso de repositorio GitHub	✅	Repositorio público activo
 Estrategia de ramas organizada	✅	Git Flow implementado
 Commits significativos	✅	Conventional Commits adoptado
 Colaboración activa	✅	PRs, issues y reviews documentados
-Gestión organizada del código	✅	Procesos y métricas establecidas
+Gestión organizada del código	✅	Procesos y métricas establecidas~~
 
 ## 🚀 Mejoras Continuas Implementadas
 🔄 Procesos de Mejora
