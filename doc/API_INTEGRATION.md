@@ -1,11 +1,13 @@
 ```markdown
-🔌 Integración con APIs - Viajero App
-🌐 Consumo de Servicios y Comunicación Cliente-Servidor
+# 🔌 Integración con APIs - Viajero App
+
+## 🌐 Consumo de Servicios y Comunicación Cliente-Servidor
+
 Arquitectura Real: Clean Architecture + BLoC Pattern
 Backend Principal: Firebase Firestore + Authentication
 APIs Externas: Google Maps SDK, Geolocator
 
-📖 Tabla de Contenidos
+## 📖 Tabla de Contenidos
 🏗️ Arquitectura Real de Integración
 
 🔥 Integración Firebase Implementada
@@ -22,26 +24,30 @@ APIs Externas: Google Maps SDK, Geolocator
 
 📊 Métricas Reales de Performance
 
-🏗️ Arquitectura Real de Integración
+## 🏗️ Arquitectura Real de Integración
 🔄 Flujo Real de Datos en Tu Proyecto
+```mermaid
+graph TB
+    A[UI Widgets] --> B[BLoC Events]
+    B --> C[Use Cases]
+    C --> D[Repository Interfaces]
+    D --> E[Repository Implementations]
+    E --> F[Firebase Firestore]
+    E --> G[Firebase Auth]
+    E --> H[Google Maps SDK]
+    E --> I[Geolocator Package]
+    
+    F --> F1[Buses Collection]
+    F --> F2[Users Collection]
+    F --> F3[Routes Collection]
+    G --> G1[Email/Password Auth]
+    H --> H1[Map Rendering]
+    H --> H2[Markers & Polylines]
+    I --> I1[User Location]
+    I --> I2[Distance Calculations]
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-📁 Estructura Real de Tu Código
+## 📁 Estructura Real de Tu Código
 text
 lib/
 ├── features/
