@@ -460,23 +460,18 @@ xychart-beta
 
 📊 99.8% uptime en pruebas de estrés
 
-### 🏆 Cumplimiento de Requisitos del Reto
+### 🏆 **Cumplimiento de Requisitos del Reto**
 
-Requisito	Cumplimiento	Evidencia
+| Requisito                 | Cumplimiento | Evidencia                       |
+| ------------------------- | ------------ | ------------------------------- |
+| Información tiempo real   | ✅ 100%       | Mapa con updates cada 10s       |
+| Tiempos espera estimados  | ✅ 100%       | Algoritmo ETA ±2min             |
+| Planificador de viajes    | ✅ 100%       | Sistema matching multi-criterio |
+| Alertas y notificaciones  | ✅ 100%       | Push notifications contextuales |
+| Monitoreo flotas          | ✅ 100%       | Dashboard admin tiempo real     |
+| Gestión rutas/horarios    | ✅ 100%       | CRUD completo con validaciones  |
+| Análisis datos y reportes | ✅ 100%       | Sistema analytics con KPIs      |
 
-Información tiempo real	✅ 100%	Mapa con updates cada 10s
-
-Tiempos espera estimados	✅ 100%	Algoritmo ETA ±2min
-
-Planificador de viajes	✅ 100%	Sistema matching multi-criterio
-
-Alertas y notificaciones	✅ 100%	Push notifications contextuales
-
-Monitoreo flotas	✅ 100%	Dashboard admin tiempo real
-
-Gestión rutas/horarios	✅ 100%	CRUD completo con validaciones
-
-Análisis datos y reportes	✅ 100%	Sistema analytics con KPIs
 
 ## 🚀 Conclusión y Impacto
 ### 💫 Transformación Lograda
@@ -506,7 +501,9 @@ Viajero App ha transformado radicalmente la experiencia del transporte público 
 "Viajero App no es solo una aplicación, es un ecosistema que humaniza la tecnología para resolver problemas reales de movilidad urbana, demostrando que la innovación disruptiva puede ser a la vez poderosa y accesible."
 
 🔗 Repositorio: github.com/jmendozahackaton/Viajero_App
+
 📧 Contacto: **INNOVATION TEAMS**
+
 🎪 Hackathon Nicaragua 2025 - Temática "Disruptivo 2025"
 
 "Transformando el transporte público, un viaje a la vez." 🚌✨
