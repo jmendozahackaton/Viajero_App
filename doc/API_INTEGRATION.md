@@ -25,7 +25,9 @@ APIs Externas: Google Maps SDK, Geolocator
 📊 Métricas Reales de Performance
 
 ## 🏗️ Arquitectura Real de Integración
-🔄 Flujo Real de Datos en Tu Proyecto
+
+🔄 Flujo Real de Datos en Tu 
+
 ```mermaid
 graph TB
     A[UI Widgets] --> B[BLoC Events]
