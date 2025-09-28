@@ -1,4 +1,3 @@
-```markdown
 # 🔌 Integración con APIs - Viajero App
 
 ## 🌐 Consumo de Servicios y Comunicación Cliente-Servidor
@@ -49,7 +48,7 @@ graph TB
 ``` 
 
 
-📁 Estructura Real de Tu Código
+**📁 Estructura Real de Tu Código**
 text
 `lib/
 ├── features/
@@ -66,8 +65,9 @@ text
 
 
 ## 🔥 Integración Firebase Implementada
-📊 Firebase Firestore - Estructura Real de Datos
-Colecciones Implementadas en Tu Proyecto:
+**📊 Firebase Firestore - Estructura Real de Datos**
+
+**Colecciones Implementadas en Tu Proyecto:**
 dart
 ```c#
 // Estructura real de tu base de datos Firestore
@@ -97,8 +97,11 @@ class FirestoreCollections {
     }
   }
 }
-Repository Implementation Real:
+```
+
+**Repository Implementation Real:**
 dart
+```c#
 // lib/features/buses/data/repositories/bus_repository_impl.dart - IMPLEMENTACIÓN REAL
 class BusRepositoryImpl implements BusRepository {
   final FirebaseFirestore _firestore;
@@ -128,8 +131,9 @@ class BusRepositoryImpl implements BusRepository {
 
 
 ## 🔐 Firebase Authentication Real
-Implementación de Autenticación:
+**Implementación de Autenticación:**
 dart
+```c#
 // lib/features/auth/data/repositories/auth_repository_impl.dart - IMPLEMENTACIÓN REAL
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth _auth;
@@ -162,10 +166,14 @@ class AuthRepositoryImpl implements AuthRepository {
     });
   }
 }
-🗺️ APIs de Mapas y Geolocalización Real
-🧭 Google Maps SDK - Implementación Real
-Configuración del Mapa:
+```
+
+## 🗺️ APIs de Mapas y Geolocalización Real
+**🧭 Google Maps SDK - Implementación Real**
+
+**Configuración del Mapa:**
 dart
+```c#
 // lib/features/map/presentation/pages/transport_map_page.dart - IMPLEMENTACIÓN REAL
 class TransportMapPage extends StatefulWidget {
   @override
@@ -203,9 +211,13 @@ class TransportMapPage extends StatefulWidget {
     }).toSet();
   }
 }
-📍 Geolocator - Implementación Real
-Obtención de Ubicación del Usuario:
+```
+
+## 📍 Geolocator - Implementación Real
+
+**Obtención de Ubicación del Usuario:**
 dart
+```c#
 // lib/features/map/presentation/bloc/map_bloc.dart - IMPLEMENTACIÓN REAL
 class MapBloc extends Bloc<MapEvent, MapState> {
   final Geolocator _geolocator;
@@ -224,8 +236,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
   }
 }
-Cálculo de Distancias Real:
+```
+
+**Cálculo de Distancias Real:**
 dart
+```c#
 // lib/features/trips/domain/usecases/plan_trip_usecase.dart - IMPLEMENTACIÓN REAL
 class PlanTripUseCase {
   Future<List<TripOption>> execute(TripRequest request) async {
@@ -254,10 +269,14 @@ class PlanTripUseCase {
     return R * c;
   }
 }
-📡 Comunicación en Tiempo Real Implementada
-🔄 Streams de Firebase Firestore
-Implementación Real de Streams:
+```
+
+## 📡 Comunicación en Tiempo Real Implementada
+**🔄 Streams de Firebase Firestore**
+
+**Implementación Real de Streams:**
 dart
+```c#
 // lib/features/buses/domain/repositories/bus_repository.dart - IMPLEMENTACIÓN REAL
 abstract class BusRepository {
   Stream<List<BusEntity>> streamActiveBuses();
@@ -288,9 +307,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     });
   }
 }
-📊 Actualización en Tiempo Real de Buses
-Sistema de Movimiento de Buses:
+```
+
+## 📊 Actualización en Tiempo Real de Buses
+**Sistema de Movimiento de Buses:**
+
 dart
+```c#
 // lib/features/core/services/bus_movement_service.dart - IMPLEMENTACIÓN REAL
 class BusMovementService {
   final BusRepository _busRepository;
@@ -319,10 +342,14 @@ class BusMovementService {
     };
   }
 }
-🔐 Autenticación y Seguridad Real
-🔑 Gestión de Sesiones Implementada
-Flujo Real de Autenticación:
+```
+
+## 🔐 Autenticación y Seguridad Real
+**🔑 Gestión de Sesiones Implementada**
+
+**Flujo Real de Autenticación:**
 dart
+```c#
 // lib/features/auth/presentation/bloc/auth_bloc.dart - IMPLEMENTACIÓN REAL
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
@@ -347,7 +374,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 }
-Manejo de Roles y Permisos:
+```
+
+**Manejo de Roles y Permisos:**
+```c#
 dart
 // lib/features/auth/domain/entities/user_entity.dart - IMPLEMENTACIÓN REAL
 class UserEntity {
@@ -363,10 +393,14 @@ class UserEntity {
   bool get isDriver => userType == 'driver';
   bool get isPassenger => userType == 'passenger';
 }
-⚡ Optimizaciones Realmente Implementadas
-🚀 Estrategias de Performance Real
-Debouncing para Búsquedas:
+```
+
+## ⚡ Optimizaciones Realmente Implementadas
+**🚀 Estrategias de Performance Real**
+
+**Debouncing para Búsquedas:**
 dart
+```c#
 // lib/features/admin/presentation/bloc/users_management_bloc.dart - IMPLEMENTACIÓN REAL
 class UsersManagementBloc extends Bloc<UsersManagementEvent, UsersManagementState> {
   Timer? _searchDebounce;
@@ -380,8 +414,11 @@ class UsersManagementBloc extends Bloc<UsersManagementEvent, UsersManagementStat
     });
   }
 }
-Paginación para Listas Grandes:
+```
+
+**Paginación para Listas Grandes:**
 dart
+```c#
 // lib/features/buses/presentation/bloc/bus_management_bloc.dart - IMPLEMENTACIÓN REAL
 class BusManagementBloc extends Bloc<BusManagementEvent, BusManagementState> {
   void _onLoadMoreBuses(LoadMoreBuses event, Emitter<BusManagementState> emit) async {
@@ -402,10 +439,14 @@ class BusManagementBloc extends Bloc<BusManagementEvent, BusManagementState> {
     }
   }
 }
-🐛 Manejo de Errores Real
-🚨 Estrategia Real de Error Handling
-Manejo de Errores en BLoC:
+```
+
+## 🐛 Manejo de Errores Real
+**🚨 Estrategia Real de Error Handling**
+
+**Manejo de Errores en BLoC:**
 dart
+```c#
 // IMPLEMENTACIÓN REAL de manejo de errores en tu proyecto
 void _onDeleteBus(DeleteBusEvent event, Emitter<BusManagementState> emit) async {
   emit(state.copyWith(isLoading: true, errorMessage: null));
@@ -429,8 +470,11 @@ void _onDeleteBus(DeleteBusEvent event, Emitter<BusManagementState> emit) async 
     ));
   }
 }
-Manejo de Estados de Carga:
+```
+
+**Manejo de Estados de Carga:**
 dart
+```c#
 // Estados reales de carga implementados
 enum DataStatus { loading, success, error, empty }
 
@@ -449,16 +493,23 @@ class BusManagementState extends Equatable {
     this.isLoading = false,
   });
 }
-📊 Métricas Reales de Performance
-📈 Dashboard de Métricas Implementadas
-Métrica	Valor Objetivo	Valor Actual	Tecnología
-Tiempo respuesta Firestore	< 500ms	~300ms	Firebase SDK
-Actualización buses tiempo real	10 segundos	10 segundos	Streams
-Carga inicial de mapa	< 3 segundos	~2 segundos	Google Maps
-Búsqueda de usuarios	< 1 segundo	~800ms	Debouncing
-Autenticación	< 2 segundos	~1.5 segundos	Firebase Auth
+```
+
+## 📊 Métricas Reales de Performance
+📈 **Dashboard de Métricas Implementadas**
+
+| Métrica                         | Valor Objetivo | Valor Actual  | Tecnología    |
+| ------------------------------- | -------------- | ------------- | ------------- |
+| Tiempo respuesta Firestore      | < 500ms        | ~300ms        | Firebase SDK  |
+| Actualización buses tiempo real | 10 segundos    | 10 segundos   | Streams       |
+| Carga inicial de mapa           | < 3 segundos   | ~2 segundos   | Google Maps   |
+| Búsqueda de usuarios            | < 1 segundo    | ~800ms        | Debouncing    |
+| Autenticación                   | < 2 segundos   | ~1.5 segundos | Firebase Auth |
+
+
 🔄 Monitoreo Real Implementado
 dart
+```c#
 // Logging real implementado en tu proyecto
 void _logApiCall(String endpoint, Duration duration, bool success) {
   debugPrint('API Call: $endpoint | Duration: ${duration.inMilliseconds}ms | Success: $success');
@@ -485,18 +536,27 @@ class BusRepositoryImpl implements BusRepository {
     }
   }
 }
-✅ Cumplimiento Real del Entregable
-Requisito	Cumplimiento	Evidencia Real
-Consumo de servicios/APIs	✅ 100%	Firebase Firestore, Auth, Google Maps
-Soporte a lógica del sistema	✅ 100%	Repository pattern + BLoC implementado
-Comunicación cliente-servidor	✅ 100%	Streams en tiempo real funcionando
-Manejo de autenticación	✅ 100%	Firebase Auth con roles implementado
-Optimización de performance	✅ 100%	Debouncing, paginación, caching
-Manejo de errores	✅ 100%	Try-catch en todos los BLoCs
-Comunicación en tiempo real	✅ 100%	Buses se actualizan cada 10 segundos
-🎯 Tecnologías Realmente Implementadas
+```
+
+
+✅ **Cumplimiento Real del Entregable**
+
+| Requisito                     | Cumplimiento | Evidencia Real                         |
+| ----------------------------- | ------------ | -------------------------------------- |
+| Consumo de servicios/APIs     | ✅ 100%       | Firebase Firestore, Auth, Google Maps  |
+| Soporte a lógica del sistema  | ✅ 100%       | Repository pattern + BLoC implementado |
+| Comunicación cliente-servidor | ✅ 100%       | Streams en tiempo real funcionando     |
+| Manejo de autenticación       | ✅ 100%       | Firebase Auth con roles implementado   |
+| Optimización de performance   | ✅ 100%       | Debouncing, paginación, caching        |
+| Manejo de errores             | ✅ 100%       | Try-catch en todos los BLoCs           |
+| Comunicación en tiempo real   | ✅ 100%       | Buses se actualizan cada 10 segundos   |
+
+
+## 🎯 Tecnologías Realmente Implementadas
 📦 Dependencies Reales de Tu pubspec.yaml
 yaml
+
+```c#
 dependencies:
   flutter:
     sdk: flutter
@@ -517,9 +577,11 @@ void main() async {
   
   runApp(ViajeroApp());
 }
+```
+
+
 🔗 Repositorio Real: github.com/jmendozahackaton/Viajero_App
+
 🚀 Estado: 100% Funcional y en Producción
 
 "Integraciones reales y probadas que funcionan en el contexto específico de Viajero App para Nicaragua." 🇳🇮🚌
-
-```

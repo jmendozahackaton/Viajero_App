@@ -49,18 +49,15 @@ Estrategia: Git Flow · Ramas: Feature-based · Commits: Conventional Commits
     commit id: "Start v1.1.0 development"
 ```
 
-📋 Ramas Definidas en el Proyecto
-Rama	Propósito	Estabilidad	Ejemplo
+📋 **Ramas Definidas en el Proyecto**
 
-main	Producción estable	🟢 Alta	v1.0.0
-
-develop	Integración continua	🟡 Media	feature/ merges
-
-feature/*	Nuevas funcionalidades	🔴 Baja	feature/trip-planner
-
-hotfix/*	Correcciones críticas	🔴 Baja	hotfix/auth-bug
-
-release/*	Preparación releases	🟡 Media	release/v1.1.0
+| Rama      | Propósito              | Estabilidad | Ejemplo              |
+| --------- | ---------------------- | ----------- | -------------------- |
+| main      | Producción estable     | 🟢 Alta     | v1.0.0               |
+| develop   | Integración continua   | 🟡 Media    | feature/ merges      |
+| feature/* | Nuevas funcionalidades | 🔴 Baja     | feature/trip-planner |
+| hotfix/*  | Correcciones críticas  | 🔴 Baja     | hotfix/auth-bug      |
+| release/* | Preparación releases   | 🟡 Media    | release/v1.1.0       |
 
 
 ## 🎯 Reglas de Protección de Ramas
@@ -91,15 +88,18 @@ text
 [footer]**
 
 
-## 📚 Tipos de Commits Utilizados
-Tipo	Descripción	Ejemplo
-feat	Nueva funcionalidad	feat(auth): add social login
-fix	Corrección de bug	fix(map): marker positioning
-docs	Documentación	docs(readme): add installation
-style	Formato código	style: format with dartfmt
-refactor	Refactorización	refactor(bloc): simplify state
-test	Pruebas	test(auth): add unit tests
-chore	Tareas mantenimiento	chore(deps): update packages
+## 📚 **Tipos de Commits Utilizados**
+
+| Tipo     | Descripción          | Ejemplo                        |
+| -------- | -------------------- | ------------------------------ |
+| feat     | Nueva funcionalidad  | feat(auth): add social login   |
+| fix      | Corrección de bug    | fix(map): marker positioning   |
+| docs     | Documentación        | docs(readme): add installation |
+| style    | Formato código       | style: format with dartfmt     |
+| refactor | Refactorización      | refactor(bloc): simplify state |
+| test     | Pruebas              | test(auth): add unit tests     |
+| chore    | Tareas mantenimiento | chore(deps): update packages   |
+
 
 🏆 Ejemplos de Commits del Proyecto
 bash
@@ -368,19 +368,16 @@ jobs:
       - run: flutter build apk --release
 ```
 
-## ✅ Cumplimiento de Requisitos del Entregable
+## ✅ **Cumplimiento de Requisitos del Entregable**
 
-Requisito	Cumplimiento	Evidencia
+| Requisito                      | Cumplimiento | Evidencia                          |
+| ------------------------------ | ------------ | ---------------------------------- |
+| Uso de repositorio GitHub      | ✅            | Repositorio público activo         |
+| Estrategia de ramas organizada | ✅            | Git Flow implementado              |
+| Commits significativos         | ✅            | Conventional Commits adoptado      |
+| Colaboración activa            | ✅            | PRs, issues y reviews documentados |
+| Gestión organizada del código  | ✅            | Procesos y métricas establecidas   |
 
-Uso de repositorio GitHub	✅	Repositorio público activo
-
-Estrategia de ramas organizada	✅	Git Flow implementado
-
-Commits significativos	✅	Conventional Commits adoptado
-
-Colaboración activa	✅	PRs, issues y reviews documentados
-
-Gestión organizada del código	✅	Procesos y métricas establecidas
 
 ## 🚀 Mejoras Continuas Implementadas
 🔄 Procesos de Mejora

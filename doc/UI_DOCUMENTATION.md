@@ -32,6 +32,7 @@ https://drive.google.com/file/d/1-CpG6slL8_fJi0pstXOnZySVZPZOneXZ/view?usp=shari
 Pantalla principal de la aplicación después del login
 
 🎯 Funcionalidad Principal
+
 ✅ Navegación rápida a módulos principales
 
 ✅ Resumen de estadísticas en tiempo real
@@ -364,6 +365,7 @@ class HomePage extends StatelessWidget {
 
 
 🎨 Coherencia Estética
+
 Paleta de colores: Azul principal (#4F46E5), fondo blanco
 
 Componentes: Tarjetas con sombras, iconos Material Icons
@@ -388,6 +390,7 @@ https://drive.google.com/file/d/1gLRhpioaU8WvQh10LWBvrLlP6PNpgAjl/view?usp=shari
 Mapa en tiempo real con buses, rutas y paradas
 
 🎯 Funcionalidad Principal
+
 ✅ Mapa Google Maps con overlay personalizado
 
 ✅ Marcadores de buses en movimiento tiempo real
@@ -1549,6 +1552,7 @@ class _TransportMapPageState extends State<TransportMapPage> {
 ```
 
 🎨 Coherencia Estética
+
 Mapa: Estilo personalizado con colores de la marca
 
 Marcadores: Íconos customizados para buses/paradas
@@ -1572,6 +1576,7 @@ https://drive.google.com/file/d/1oe7e29k2hB82t4ZwaxOFooWYheMAnYfA/view?usp=shari
 Panel administrativo para gestión completa de usuarios
 
 🎯 Funcionalidad Principal
+
 ✅ CRUD completo de usuarios del sistema
 
 ✅ Búsqueda y filtrado en tiempo real
@@ -1685,6 +1690,7 @@ class AdminUsersPage extends StatelessWidget {
 ```
 
 🎨 Coherencia Estética
+
 Tabla de datos: Scroll horizontal, ordenamiento por columnas
 
 Estados visuales: Badges para roles, switches para estado activo
@@ -1709,6 +1715,7 @@ https://drive.google.com/file/d/1pjwak2becHrmxSVYB5n-KFKHWufj7hXg/view?usp=shari
 Interfaz para administrar la flota de buses
 
 🎯 Funcionalidad Principal
+
 ✅ Listado de buses con estado en tiempo real
 
 ✅ Asignación de conductores desde lista de usuarios
@@ -1928,6 +1935,7 @@ class _BusesListPageState extends State<BusesListPage> {
 ```
 
 🎨 Coherencia Estética
+
 Cards de buses: Diseño compacto con información esencial
 
 Estado visual: Colores para estados (activo/inactivo/en ruta)
@@ -1952,6 +1960,7 @@ https://drive.google.com/file/d/1ikUOpbfoMDL97o-ZsUlEkbFqsKuYblfn/view?usp=shari
 Sistema inteligente de planificación de rutas
 
 🎯 Funcionalidad Principal
+
 ✅ Búsqueda de origen/destino con autocompletado
 
 ✅ Algoritmo de matching de rutas óptimas
@@ -2421,6 +2430,7 @@ class _TripPlannerPageState extends State<TripPlannerPage> {
 
 
 🎨 Coherencia Estética
+
 Interfaz de búsqueda: Campo de búsqueda prominente con sugerencias
 
 Resultados: Cards comparativas con métricas claras
@@ -2441,6 +2451,7 @@ dart
 
 🎯 Análisis General de UX/UI
 ✅ Fortalezas Identificadas
+
 Consistencia visual en toda la aplicación
 
 Navegación intuitiva con flujos claros
@@ -2450,6 +2461,7 @@ Feedback visual inmediato para acciones del usuario
 Responsive design que se adapta a diferentes dispositivos
 
 🔧 Mejoras Recomendadas
+
 Loading states más elaborados para operaciones largas
 
 Empty states para cuando no hay datos
@@ -2475,13 +2487,16 @@ TextStyle(
 )
 ```
 
-📊 Métricas de Calidad UI/UX
-Métrica	Valor	Estado
-Tiempo de carga inicial	< 2 segundos	✅ Óptimo
-Consistencia visual	95% de componentes reutilizables	✅ Excelente
-Navegación fluida	Transiciones < 300ms	✅ Bueno
-Accesibilidad	Soporte básico lectores pantalla	⚠️ Mejorable
-Feedback usuario	Confirmación todas las acciones	✅ Completo
+📊 **Métricas de Calidad UI/UX**
+
+| Métrica                 | Valor                            | Estado       |
+| ----------------------- | -------------------------------- | ------------ |
+| Tiempo de carga inicial | < 2 segundos                     | ✅ Óptimo     |
+| Consistencia visual     | 95% de componentes reutilizables | ✅ Excelente  |
+| Navegación fluida       | Transiciones < 300ms             | ✅ Bueno      |
+| Accesibilidad           | Soporte básico lectores pantalla | ⚠️ Mejorable |
+| Feedback usuario        | Confirmación todas las acciones  | ✅ Completo   |
+
 
 🔗 Integración con Arquitectura General
 🏗️ Patrón BLoC Implementado
@@ -2496,16 +2511,23 @@ BlocProvider<FeatureBloc>(
 ```
 
 🔄 Flujo de Datos
-text
+```text
 UI Widgets → BLoC Events → Use Cases → Repositories → Firebase
-✅ Cumplimiento de Requisitos del Entregable
-Requisito	Cumplimiento	Evidencia
-5 pantallas funcionales	✅	5 pantallas documentadas
-Navegación fluida	✅	Rutas GoRouter implementadas
-Coherencia estética	✅	Sistema de diseño unificado
-Interacción con backend	✅	Integración Firebase completa
-Experiencia de usuario sólida	✅	Feedback y estados de carga
+```
+
+## ✅ **Cumplimiento de Requisitos del Entregable**
+
+| Requisito                     | Cumplimiento | Evidencia                     |
+| ----------------------------- | ------------ | ----------------------------- |
+| 5 pantallas funcionales       | ✅            | 5 pantallas documentadas      |
+| Navegación fluida             | ✅            | Rutas GoRouter implementadas  |
+| Coherencia estética           | ✅            | Sistema de diseño unificado   |
+| Interacción con backend       | ✅            | Integración Firebase completa |
+| Experiencia de usuario sólida | ✅            | Feedback y estados de carga   |
+
+
 🚀 Próximos Pasos para Mejora Continua
+
 Implementar design system más robusto con tokens
 
 Agregar modo oscuro para mejor experiencia nocturna
@@ -2515,6 +2537,7 @@ Optimizar performance en listas largas con virtual scrolling
 Mejorar accesibilidad con semántica completa
 
 Documentación generada para: Hackathon Nicaragua 2025
+
 Repositorio: github.com/jmendozahackaton/Viajero_App
 
 "Interfaces que no solo se ven bien, sino que funcionan mejor." 🎨✨
