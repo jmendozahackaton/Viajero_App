@@ -51,7 +51,7 @@ graph TB
 
 📁 Estructura Real de Tu Código
 text
-lib/
+`lib/
 ├── features/
 │   ├── auth/
 │   │   ├── domain/repositories/auth_repository.dart
@@ -62,7 +62,7 @@ lib/
 │   ├── map/
 │   │   └── presentation/bloc/map_bloc.dart
 │   └── trips/
-│       └── domain/usecases/plan_trip_usecase.dart
+│       └── domain/usecases/plan_trip_usecase.dart`
 
 
 ## 🔥 Integración Firebase Implementada

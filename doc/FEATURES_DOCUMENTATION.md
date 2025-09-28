@@ -1,4 +1,3 @@
-```markdown
 # 🚀 Funcionalidades del Reto - Viajero App
 
 ## 🎯 Implementación de Soluciones para la Problemática del Transporte Público
@@ -515,5 +514,3 @@ Viajero App ha transformado radicalmente la experiencia del transporte público 
 🎪 Hackathon Nicaragua 2025 - Temática "Disruptivo 2025"
 
 "Transformando el transporte público, un viaje a la vez." 🚌✨
-
-```
