@@ -370,13 +370,17 @@ jobs:
 
 ## ✅ Cumplimiento de Requisitos del Entregable
 
-R~~equisito	Cumplimiento	Evidencia
+Requisito	Cumplimiento	Evidencia
 
 Uso de repositorio GitHub	✅	Repositorio público activo
+
 Estrategia de ramas organizada	✅	Git Flow implementado
+
 Commits significativos	✅	Conventional Commits adoptado
+
 Colaboración activa	✅	PRs, issues y reviews documentados
-Gestión organizada del código	✅	Procesos y métricas establecidas~~
+
+Gestión organizada del código	✅	Procesos y métricas establecidas
 
 ## 🚀 Mejoras Continuas Implementadas
 🔄 Procesos de Mejora
