@@ -1,3 +1,4 @@
+```markdown
 🔌 Integración con APIs - Viajero App
 🌐 Consumo de Servicios y Comunicación Cliente-Servidor
 Arquitectura Real: Clean Architecture + BLoC Pattern
@@ -507,3 +508,4 @@ void main() async {
 
 "Integraciones reales y probadas que funcionan en el contexto específico de Viajero App para Nicaragua." 🇳🇮🚌
 
+```
