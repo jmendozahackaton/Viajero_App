@@ -1,5 +1,6 @@
 🎯 DIAGRAMA 6: Arquitectura General del Sistema
-![graph TB
+
+graph TB
     subgraph Capa de Presentación
         A[Flutter UI Widgets] --> B[BLoC Pattern]
         B --> C[Eventos]
@@ -28,4 +29,4 @@
     G --> H
     I --> K
     J --> M
-    J --> O](https://)
+    J --> O
