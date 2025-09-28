@@ -27,20 +27,26 @@ APIs Externas: Google Maps SDK, Geolocator
 🏗️ Arquitectura Real de Integración
 🔄 Flujo Real de Datos en Tu Proyecto
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```mermaid
+    graph TB
+        A[UI Widgets] --> B[BLoC Events]
+        B --> C[Use Cases]
+        C --> D[Repository Interfaces]
+        D --> E[Repository Implementations]
+        E --> F[Firebase Firestore]
+        E --> G[Firebase Auth]
+        E --> H[Google Maps SDK]
+        E --> I[Geolocator Package]
+        
+        F --> F1[Buses Collection]
+        F --> F2[Users Collection]
+        F --> F3[Routes Collection]
+        G --> G1[Email/Password Auth]
+        H --> H1[Map Rendering]
+        H --> H2[Markers & Polylines]
+        I --> I1[User Location]
+        I --> I2[Distance Calculations]
+``` 
 
 
 📁 Estructura Real de Tu Código
@@ -57,7 +63,9 @@ lib/
 │   │   └── presentation/bloc/map_bloc.dart
 │   └── trips/
 │       └── domain/usecases/plan_trip_usecase.dart
-🔥 Integración Firebase Implementada
+
+
+## 🔥 Integración Firebase Implementada
 📊 Firebase Firestore - Estructura Real de Datos
 Colecciones Implementadas en Tu Proyecto:
 dart
