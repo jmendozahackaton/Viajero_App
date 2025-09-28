@@ -23,8 +23,9 @@ APIs Externas: Google Maps SDK, Geolocator
 
 📊 Métricas Reales de Performance
 
+
 ## 🏗️ Arquitectura Real de Integración
-🔄 Flujo Real de Datos en Tu Proyecto
+**🔄 Flujo Real de Datos en Tu Proyecto**
 
 ```mermaid
 graph TB
@@ -45,7 +46,8 @@ graph TB
     H --> H2[Markers & Polylines]
     I --> I1[User Location]
     I --> I2[Distance Calculations]
-``` 
+```
+
 
 
 **📁 Estructura Real de Tu Código**
@@ -580,7 +582,7 @@ void main() async {
 ```
 
 
-🔗 Repositorio Real: github.com/jmendozahackaton/Viajero_App
+🔗 Repositorio Real: [github.com/jmendozahackaton/Viajero_App](https://)
 
 🚀 Estado: 100% Funcional y en Producción
 
