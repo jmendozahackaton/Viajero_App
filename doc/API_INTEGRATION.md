@@ -24,32 +24,26 @@ APIs Externas: Google Maps SDK, Geolocator
 
 📊 Métricas Reales de Performance
 
-## 🏗️ Arquitectura Real de Integración
+🏗️ Arquitectura Real de Integración
+🔄 Flujo Real de Datos en Tu Proyecto
 
-🔄 Flujo Real de Datos en Tu 
 
-```mermaid
-flowchart TD
-    A[UI Widgets] --> B[BLoC Events]
-    B --> C[Use Cases]
-    C --> D[Repository Interfaces]
-    D --> E[Repository Implementations]
-    E --> F[Firebase Firestore]
-    E --> G[Firebase Auth]
-    E --> H[Google Maps SDK]
-    E --> I[Geolocator Package]
-    
-    F --> F1[Buses Collection]
-    F --> F2[Users Collection]
-    F --> F3[Routes Collection]
-    G --> G1[Email/Password Auth]
-    H --> H1[Map Rendering]
-    H --> H2[Markers & Polylines]
-    I --> I1[User Location]
-    I --> I2[Distance Calculations]
-```
 
-## 📁 Estructura Real de Tu Código
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+📁 Estructura Real de Tu Código
 text
 lib/
 ├── features/
