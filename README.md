@@ -63,6 +63,7 @@
 
 ### 🏛️ Clean Architecture Implementada
 
+```console
 # lib/
 # ├── core/ # Componentes transversales
 # │ ├── constants/ # Constantes de la aplicación
@@ -82,6 +83,7 @@
 # ├── routes/ # Gestión de rutas
 # ├── trips/ # Planificación de viajes
 # └── admin/ # Panel administrativo
+```
 
 ### 🔄 Flujo de Datos
 1. **Presentación** → Widgets y BLoC
@@ -220,6 +222,7 @@ Mockito - Testing unitario
 
 ## 🏛️ Estructura del Proyecto
 
+```console
 # lib/
 # ├── core/
 # │   ├── constants/      # AppConstants, RouteNames
@@ -241,6 +244,7 @@ Mockito - Testing unitario
 #     ├── trips/          # Trip planning
 #     ├── admin/          # Admin dashboard
  #    └── map/            # Interactive map
+```
 
 ## 👥 Roles de Usuario
 👤 Pasajero (Usuario Regular)
