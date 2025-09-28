@@ -55,22 +55,18 @@ graph LR
     E[Problema: Desconfianza sistema] --> E1[Función: Transparencia total]
 ```
 
-## 📋 Matriz de Cobertura de Requisitos
-Requisito Original	Función Implementada	Estado	Evidencia
+📋 **Matriz de Cobertura de Requisitos**
 
-Información rutas tiempo real	Mapa con buses en movimiento	✅ 100%	TransportMapPage
+| Requisito Original            | Función Implementada         | Estado  | Evidencia           |
+| ----------------------------- | ---------------------------- | ------- | ------------------- |
+| Información rutas tiempo real | Mapa con buses en movimiento | ✅ 100% | TransportMapPage    |
+| Tiempos espera estimados      | Algoritmo ETA inteligente    | ✅ 100% | ETACalculator       |
+| Planificador de viajes        | Sistema matching rutas       | ✅ 100% | TripPlannerService  |
+| Alertas y notificaciones      | Sistema push notifications   | ✅ 100% | NotificationService |
+| Monitoreo flotas tiempo real  | Dashboard admin live         | ✅ 100% | AdminDashboard      |
+| Gestión rutas y horarios      | CRUD completo rutas          | ✅ 100% | RouteManagement     |
+| Análisis datos y reportes     | Analytics y KPIs             | ✅ 100% | ReportingSystem     |
 
-Tiempos espera estimados	Algoritmo ETA inteligente	✅ 100%	ETACalculator
-
-Planificador de viajes	Sistema matching rutas	✅ 100%	TripPlannerService
-
-Alertas y notificaciones	Sistema push notifications	✅ 100%	NotificationService
-
-Monitoreo flotas tiempo real	Dashboard admin live	✅ 100%	AdminDashboard
-
-Gestión rutas y horarios	CRUD completo rutas	✅ 100%	RouteManagement
-
-Análisis datos y reportes	Analytics y KPIs	✅ 100%	ReportingSystem
 
 
 ## 👤 Funcionalidades para Usuarios
