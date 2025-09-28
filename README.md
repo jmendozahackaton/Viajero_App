@@ -129,26 +129,38 @@ Configurar reglas de seguridad en Firestore
 📱 Funcionalidades
 Módulo de Autenticación
 ✅ Registro de usuarios con email/contraseña
+
 ✅ Login seguro con Firebase Auth
+
 ✅ Gestión de sesiones persistentes
+
 ✅ Recuperación de contraseñas
 
 Módulo de Mapas y Geolocalización
 ✅ Mapa interactivo con Google Maps
+
 ✅ Marcadores de buses en tiempo real
+
 ✅ Paradas de buses georreferenciadas
+
 ✅ Rutas visualizadas con polilíneas
 
 Módulo de Planificación de Viajes
 ✅ Algoritmo inteligente de matching de rutas
+
 ✅ Cálculo de distancias y tiempos optimizados
+
 ✅ Múltiples criterios de preferencia
+
 ✅ Historial de viajes guardados
 
 Módulo Administrativo
-✅ CRUD completo de usuarios y buses
+✅ CRUD completo de buses y rutas
+
 ✅ Gestión de usuarios y permisos
+
 ✅ Dashboard con métricas en tiempo real
+
 ✅ Sistema de reportes automáticos
 
 ### 🛠️ Tecnologías Utilizadas
