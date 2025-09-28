@@ -125,7 +125,7 @@ GoogleService-Info.plist (iOS)
 Colocar archivos en las carpetas correspondientes
 Configurar reglas de seguridad en Firestore
 
-📱 Funcionalidades
+## 📱 Funcionalidades
 Módulo de Autenticación
 ✅ Registro de usuarios con email/contraseña
 
@@ -161,7 +161,8 @@ Módulo Administrativo
 ✅ Dashboard con métricas en tiempo real
 
 ✅ Sistema de reportes automáticos
-🛠️ Tecnologías Utilizadas
+
+## 🛠️ Tecnologías Utilizadas
 Frontend
 Flutter 3.19 - Framework principal
 
@@ -192,7 +193,8 @@ Equatable - Comparación de objetos
 
 Mockito - Testing unitario
 
-🏛️ Estructura del Proyecto
+## 🏛️ Estructura del Proyecto
+
 lib/
 ├── core/
 │   ├── constants/      # AppConstants, RouteNames
@@ -214,7 +216,8 @@ lib/
     ├── trips/          # Trip planning
     ├── admin/          # Admin dashboard
     └── map/            # Interactive map
-👥 Roles de Usuario
+
+## 👥 Roles de Usuario
 👤 Pasajero (Usuario Regular)
 Consultar rutas y horarios
 
@@ -224,14 +227,14 @@ Recibir notificaciones
 
 Ver buses en tiempo real
 
-🚗 Conductor (Usuario Privilegiado)
+## 🚗 Conductor (Usuario Privilegiado)
 Actualizar ubicación en tiempo real
 
 Gestionar estado del bus
 
 Recibir alertas de ruta
 
-👨💼 Administrador (IRTRAMMA)
+## 👨💼 Administrador (IRTRAMMA)
 Gestión completa del sistema
 
 Monitoreo en tiempo real
@@ -266,7 +269,7 @@ Git para control de versiones
 
 Firebase CLI para despliegues
 
-📊 Estado del Proyecto
+## 📊 Estado del Proyecto
 ✅ Completado
 Arquitectura Clean Architecture + BLoC
 
@@ -282,14 +285,14 @@ Notificaciones en tiempo real
 
 Dashboard administrativo
 
-🚧 En Desarrollo
+## 🚧 En Desarrollo
 Optimización de performance
 
 Tests unitarios completos
 
 Documentación avanzada
 
-📋 Próximas Features
+## 📋 Próximas Features
 Integración con APIs de transporte real
 
 Modo offline con sincronización
@@ -298,7 +301,7 @@ Análisis predictivo de rutas
 
 Sistema de pagos integrado
 
-🤝 Contribución
+## 🤝 Contribución
 ¡Las contribuciones son bienvenidas! Para contribuir:
 
 Fork el proyecto
@@ -320,14 +323,14 @@ Documenta nuevas funcionalidades
 
 Usa mensajes de commit descriptivos
 
-📄 Licencia
+## 📄 Licencia
 Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más detalles.
 
-👨‍💻 Desarrollado por
+## 👨‍💻 Desarrollado por
 Equipo Viajero App - Hackathon Nicaragua 2025
 📧 Contacto: jmendozahackaton
 
-🙏 Agradecimientos
+## 🙏 Agradecimientos
 Hackathon Nicaragua 2025 por la oportunidad
 
 Comunidad Flutter por el apoyo y recursos
