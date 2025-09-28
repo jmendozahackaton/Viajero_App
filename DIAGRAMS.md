@@ -1,32 +1,29 @@
-🎯 DIAGRAMA 6: Arquitectura General del Sistema
+## 📊 Diagramas de Flujo del Sistema
 
-graph TB
-    subgraph Capa de Presentación
-        A[Flutter UI Widgets] --> B[BLoC Pattern]
-        B --> C[Eventos]
-        B --> D[Estados]
-    end
+### 🔐 Flujo de Autenticación de Usuario
+```mermaid
+flowchart TD
+    A[Inicio App] --> B[Splash Screen]
+    B --> C{¿Usuario autenticado?}
     
-    subgraph Capa de Dominio
-        E[Casos de Uso] --> F[Entidades]
-        E --> G[Repositorios Interfaces]
-    end
+    C -->|Sí| D[Home Page]
+    C -->|No| E[Login Page]
     
-    subgraph Capa de Datos
-        H[Repositorios Implementados] --> I[Modelos de Datos]
-        H --> J[Firebase APIs]
-    end
+    E --> F[Ingresar Credenciales]
+    F --> G{Validar en Firebase Auth}
     
-    subgraph Infraestructura
-        K[Firebase Firestore] --> L[Base de Datos NoSQL]
-        M[Firebase Auth] --> N[Autenticación]
-        O[Google Maps] --> P[Servicios de Mapas]
-    end
+    G -->|Éxito| H[Obtener datos usuario Firestore]
+    H --> I[Guardar Device Token]
+    I --> D
     
-    C --> E
-    D --> A
-    F --> B
-    G --> H
-    I --> K
-    J --> M
-    J --> O
+    G -->|Error| J[Mostrar Error]
+    J --> E
+    
+    D --> K{¿Rol de usuario?}
+    K -->|Pasajero| L[Dashboard Usuario]
+    K -->|Conductor| M[Dashboard Conductor]
+    K -->|Administrador| N[Dashboard Admin]
+    
+    L --> O[Mapa Tiempo Real]
+    M --> P[Gestión de Bus]
+    N --> Q[Panel Administrativo]
