@@ -43,7 +43,7 @@ Pantalla principal de la aplicación después del login
 
 🔗 Integración con Backend
 dart
-```console
+```c#
 // Código de integración con Firebase
 StreamBuilder<QuerySnapshot>(
   stream: FirebaseFirestore.instance
@@ -57,7 +57,7 @@ StreamBuilder<QuerySnapshot>(
 
 📄 Código de la Pantalla
 dart
-```console
+```c#
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -373,16 +373,18 @@ Tipografía: Roboto, pesos: Regular 400, Medium 500
 Layout: Grid responsivo para diferentes tamaños de pantalla
 
 🚀 Navegación
+```c++
 dart
 // Navegación desde Home Page
 Navigator.pushNamed(context, '/transport-map');
 Navigator.pushNamed(context, '/admin/users');
 Navigator.pushNamed(context, '/buses');
+```
 
 
 ## 🗺️ Transport Map - Mapa Interactivo
 📱 Vista Previa
-![https://drive.google.com/file/d/1gLRhpioaU8WvQh10LWBvrLlP6PNpgAjl/view?usp=sharing](https://)
+https://drive.google.com/file/d/1gLRhpioaU8WvQh10LWBvrLlP6PNpgAjl/view?usp=sharing
 Mapa en tiempo real con buses, rutas y paradas
 
 🎯 Funcionalidad Principal
@@ -398,6 +400,7 @@ Mapa en tiempo real con buses, rutas y paradas
 
 🔗 Integración con Backend
 dart
+```c#
 // Stream de buses en tiempo real
 StreamBuilder<QuerySnapshot>(
   stream: FirebaseFirestore.instance
@@ -408,9 +411,10 @@ StreamBuilder<QuerySnapshot>(
     // Actualizar marcadores en mapa
   }
 )
+```
 📄 Código de la Pantalla
 dart
-```console
+```c#
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -1555,13 +1559,16 @@ Animaciones: Transiciones suaves en actualizaciones
 
 🚀 Navegación
 dart
+```c#
 // Flujo de interacción en el mapa
 onMarkerTap: (bus) => showBusInfoModal(bus),
 onRouteTap: (route) => showRouteDetails(route),
 onStopTap: (stop) => showStopSchedule(stop),
-👥 Admin Users - Gestión de Usuarios
+```
+
+## 👥 Admin Users - Gestión de Usuarios
 📱 Vista Previa
-https://via.placeholder.com/300x600/EF4444/FFFFFF?text=Gesti%C3%B3n+Usuarios
+https://drive.google.com/file/d/1oe7e29k2hB82t4ZwaxOFooWYheMAnYfA/view?usp=sharing
 Panel administrativo para gestión completa de usuarios
 
 🎯 Funcionalidad Principal
@@ -1577,6 +1584,7 @@ Panel administrativo para gestión completa de usuarios
 
 🔗 Integración con Backend
 dart
+```c#
 // Operaciones CRUD con Firestore
 Future<void> updateUserRole(String userId, String newRole) async {
   await _firestore.collection('users').doc(userId).update({
@@ -1584,9 +1592,98 @@ Future<void> updateUserRole(String userId, String newRole) async {
     'updatedAt': FieldValue.serverTimestamp(),
   });
 }
+```
 📄 Código de la Pantalla
 dart
-// PEGA AQUÍ EL CÓDIGO DE lib/features/admin/presentation/pages/users_management_page.dart
+```c#
+// admin_users_page.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:Viajeros/domain/repositories/user_repository.dart';
+import 'package:Viajeros/features/auth/presentation/blocs/auth_bloc.dart';
+import 'package:Viajeros/features/user/presentation/bloc/user_bloc.dart';
+import 'package:Viajeros/features/user/presentation/pages/users_list_view.dart';
+
+class AdminUsersPage extends StatelessWidget {
+  const AdminUsersPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = context.watch<AuthBloc>().state;
+
+    if (authState is! AuthAuthenticated || authState.user.userType != 'admin') {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Acceso Denegado')),
+        body: const Center(
+          child: Text('No tienes permisos para acceder a esta sección.'),
+        ),
+      );
+    }
+
+    return BlocProvider(
+      create: (context) =>
+          UserBloc(userRepository: context.read<UserRepository>())
+            ..add(UsersLoadRequested()),
+      child: Builder(
+        builder: (context) {
+          final userBloc = context.read<UserBloc>();
+
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Administración de Usuarios'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  GoRouter.of(context).go('/home');
+                },
+                tooltip: 'Regresar al inicio',
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    userBloc.add(UsersLoadRequested());
+                  },
+                  tooltip: 'Actualizar lista',
+                ),
+              ],
+            ),
+            body: BlocConsumer<UserBloc, UserState>(
+              listener: (context, state) {
+                if (state is UserError) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
+                }
+              },
+              builder: (context, state) {
+                if (state is UserLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state is UsersLoadSuccess || state is UsersSearchSuccess) {
+                  // ✅ Pasar el estado completo en lugar de solo la lista
+                  return UsersListView(state: state, userBloc: userBloc);
+                }
+
+                if (state is UserError) {
+                  return Center(child: Text('Error: ${state.message}'));
+                }
+
+                return const Center(
+                  child: Text('No hay usuarios para mostrar'),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+```
+
 🎨 Coherencia Estética
 Tabla de datos: Scroll horizontal, ordenamiento por columnas
 
@@ -1598,13 +1695,17 @@ Confirmaciones: Dialogs para acciones destructivas
 
 🚀 Navegación
 dart
+```c#
 // Navegación dentro del módulo admin
 Navigator.pushNamed(context, '/admin/users/edit', arguments: userId);
 // Retorno al listado después de edición
 Navigator.pop(context, true); // Refresh data
-🚌 Buses List - Gestión de Flota
+```
+
+
+## 🚌 Buses List - Gestión de Flota
 📱 Vista Previa
-https://via.placeholder.com/300x600/F59E0B/FFFFFF?text=Gesti%C3%B3n+Flota
+https://drive.google.com/file/d/1pjwak2becHrmxSVYB5n-KFKHWufj7hXg/view?usp=sharing
 Interfaz para administrar la flota de buses
 
 🎯 Funcionalidad Principal
@@ -1620,6 +1721,7 @@ Interfaz para administrar la flota de buses
 
 🔗 Integración con Backend
 dart
+```c#
 // Stream de buses con información de conductores
 Stream<List<BusEntity>> getActiveBusesWithDrivers() {
   return _busesCollection
@@ -1629,9 +1731,202 @@ Stream<List<BusEntity>> getActiveBusesWithDrivers() {
     // Join con colección de usuarios para datos de conductor
   });
 }
+```
+
 📄 Código de la Pantalla
 dart
-// PEGA AQUÍ EL CÓDIGO DE lib/features/buses/presentation/pages/buses_list_page.dart
+```c#
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import '../bloc/bus_management_bloc.dart';
+import '../widgets/bus_card.dart';
+import 'bus_form_page.dart';
+import 'bus_details_page.dart';
+
+class BusesListPage extends StatefulWidget {
+  const BusesListPage({super.key});
+
+  @override
+  State<BusesListPage> createState() => _BusesListPageState();
+}
+
+class _BusesListPageState extends State<BusesListPage> {
+  final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Cargar buses al iniciar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BusManagementBloc>().add(const LoadBusesEvent());
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _navigateToBusForm() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const BusFormPage()),
+    );
+  }
+
+  void _navigateToBusDetails(String busId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => BusDetailsPage(busId: busId)),
+    );
+  }
+
+  void _showDeleteDialog(String busId, String licensePlate) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar Bus'),
+        content: Text(
+          '¿Estás seguro de que quieres eliminar el bus $licensePlate?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<BusManagementBloc>().add(
+                DeleteBusEvent(busId: busId),
+              );
+              Navigator.pop(context);
+            },
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Gestión de Buses'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.home), // ← Botón de retroceso
+          onPressed: () {
+            GoRouter.of(context).go('/home');
+          },
+          tooltip: 'Regresar al inicio',
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _navigateToBusForm,
+            tooltip: 'Agregar nuevo bus',
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Buscar buses',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    context.read<BusManagementBloc>().add(ClearSearchEvent());
+                  },
+                ),
+              ),
+              onChanged: (value) {
+                context.read<BusManagementBloc>().add(
+                  SearchBusesEvent(query: value),
+                );
+              },
+            ),
+          ),
+          Expanded(
+            child: BlocConsumer<BusManagementBloc, BusManagementState>(
+              listener: (context, state) {
+                if (state.errorMessage != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.errorMessage!),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+                if (state.successMessage != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.successMessage!),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              },
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state.filteredBuses.isEmpty) {
+                  return const Center(child: Text('No se encontraron buses'));
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<BusManagementBloc>().add(
+                      const LoadBusesEvent(),
+                    );
+                  },
+                  child: ListView.builder(
+                    itemCount: state.filteredBuses.length,
+                    itemBuilder: (context, index) {
+                      final bus = state.filteredBuses[index];
+                      return BusCard(
+                        bus: bus,
+                        onTap: () => _navigateToBusDetails(bus.id),
+                        onEdit: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  BusFormPage(initialBus: bus),
+                            ),
+                          );
+                        },
+                        onDelete: () =>
+                            _showDeleteDialog(bus.id, bus.licensePlate),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _navigateToBusForm,
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
 🎨 Coherencia Estética
 Cards de buses: Diseño compacto con información esencial
 
@@ -1643,14 +1938,17 @@ Feedback: Snackbars para confirmación de acciones
 
 🚀 Navegación
 dart
+```c#
 // Flujo completo de gestión de buses
 '/buses' → Lista principal
 '/buses/create' → Formulario creación
 '/buses/edit/:id' → Edición con datos precargados
 '/buses/assign-driver' → Modal asignación conductor
-🚏 Trip Planner - Planificador de Viajes
+```
+
+## 🚏 Trip Planner - Planificador de Viajes
 📱 Vista Previa
-https://via.placeholder.com/300x600/8B5CF6/FFFFFF?text=Planificador+Viajes
+https://drive.google.com/file/d/1ikUOpbfoMDL97o-ZsUlEkbFqsKuYblfn/view?usp=sharing
 Sistema inteligente de planificación de rutas
 
 🎯 Funcionalidad Principal
@@ -1666,15 +1964,462 @@ Sistema inteligente de planificación de rutas
 
 🔗 Integración con Backend
 dart
+```c#
 // Algoritmo de planificación de viajes
 Future<List<TripOption>> planTrip(TripRequest request) async {
   final stops = await _findNearbyStops(request.origin, request.destination);
   final routes = await _findConnectingRoutes(stops);
   return _calculateOptimalOptions(routes, request.preferences);
 }
+```
+
 📄 Código de la Pantalla
 dart
-// PEGA AQUÍ EL CÓDIGO DE lib/features/trips/presentation/pages/trip_planner_page.dart
+
+```c#
+// lib/features/trip_planner/presentation/pages/trip_planner_page.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:Viajeros/features/trip_planner/domain/entities/trip_plan_entity.dart';
+import 'package:Viajeros/features/trip_planner/domain/repositories/trip_planner_repository.dart';
+import 'package:Viajeros/features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
+import 'package:Viajeros/features/trip_planner/presentation/widgets/map_location_picker_dialog.dart';
+import 'package:Viajeros/features/trip_planner/presentation/widgets/route_map_dialog.dart';
+import 'package:Viajeros/features/trip_planner/presentation/widgets/saved_trips_modal.dart';
+import 'package:Viajeros/features/trip_planner/presentation/widgets/slider_list_tile.dart';
+
+class TripPlannerPage extends StatefulWidget {
+  const TripPlannerPage({super.key});
+
+  @override
+  State<TripPlannerPage> createState() => _TripPlannerPageState();
+}
+
+class _TripPlannerPageState extends State<TripPlannerPage> {
+  final TextEditingController _originController = TextEditingController();
+  final TextEditingController _destinationController = TextEditingController();
+  final LatLng _initialPosition = const LatLng(
+    12.136389,
+    -86.251389,
+  ); // Managua
+  LatLng? _selectedOrigin;
+  LatLng? _selectedDestination;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeDevelopmentData();
+
+    // Cargar viajes guardados al iniciar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TripPlannerBloc>().add(LoadSavedTripsEvent());
+    });
+  }
+
+  Future<void> _initializeDevelopmentData() async {
+    const bool isDevelopment = true;
+
+    if (isDevelopment) {
+      try {
+        final repository = context.read<TripPlannerRepository>();
+        await repository.initializeMockData();
+        await repository.startMockMovementSimulation();
+        print('✅ Datos de prueba del planificador creados exitosamente');
+      } catch (e) {
+        print('⚠️ Error en configuración de desarrollo: $e');
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Planificador de Viajes'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.home), // ← Botón de retroceso
+          onPressed: () {
+            GoRouter.of(context).go('/home');
+          },
+          tooltip: 'Regresar al inicio',
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: _showSavedTrips,
+            tooltip: 'Viajes guardados',
+          ),
+          IconButton(
+            icon: const Icon(Icons.clear_all),
+            onPressed: _clearSearch,
+            tooltip: 'Limpiar búsqueda',
+          ),
+        ],
+      ),
+      body: BlocConsumer<TripPlannerBloc, TripPlannerState>(
+        listener: (context, state) {
+          // Mostrar mensajes de error o éxito
+          if (state.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage!),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+
+          if (state.successMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.successMessage!),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildLocationInputs(),
+                const SizedBox(height: 16),
+                _buildPreferencesSection(state),
+                const SizedBox(height: 16),
+                _buildActionButtons(state),
+                const SizedBox(height: 16),
+                _buildResultsSection(state),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildLocationInputs() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _originController,
+              decoration: InputDecoration(
+                labelText: 'Origen',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.my_location),
+                  onPressed: () => _selectLocation(true),
+                ),
+              ),
+              readOnly: true,
+              onTap: () => _selectLocation(true),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _destinationController,
+              decoration: InputDecoration(
+                labelText: 'Destino',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.place),
+                  onPressed: () => _selectLocation(false),
+                ),
+              ),
+              readOnly: true,
+              onTap: () => _selectLocation(false),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPreferencesSection(TripPlannerState state) {
+    return ExpansionTile(
+      title: const Text('Preferencias de Viaje'),
+      children: [
+        SwitchListTile(
+          title: const Text('Minimizar transbordos'),
+          value: state.currentPreferences.minimizeTransfers,
+          onChanged: (value) => _updatePreferences(minimizeTransfers: value),
+        ),
+        SwitchListTile(
+          title: const Text('Minimizar caminata'),
+          value: state.currentPreferences.minimizeWalking,
+          onChanged: (value) => _updatePreferences(minimizeWalking: value),
+        ),
+        SwitchListTile(
+          title: const Text('Priorizar accesibilidad'),
+          value: state.currentPreferences.prioritizeAccessibility,
+          onChanged: (value) =>
+              _updatePreferences(prioritizeAccessibility: value),
+        ),
+        SliderListTile(
+          title: 'Tiempo máximo de espera',
+          value: state.currentPreferences.maxWaitTime.toDouble(),
+          min: 5,
+          max: 30,
+          divisions: 5,
+          label: '${state.currentPreferences.maxWaitTime} min',
+          onChanged: (value) => _updatePreferences(maxWaitTime: value.round()),
+        ),
+        SliderListTile(
+          title: 'Distancia máxima a caminar',
+          value: state.currentPreferences.maxWalkingDistance.toDouble(),
+          min: 100,
+          max: 2000,
+          divisions: 19,
+          label: '${state.currentPreferences.maxWalkingDistance}m',
+          onChanged: (value) =>
+              _updatePreferences(maxWalkingDistance: value.round()),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons(TripPlannerState state) {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            onPressed:
+                state.isLoading ||
+                    _selectedOrigin == null ||
+                    _selectedDestination == null
+                ? null
+                : () => _planTrip(),
+            child: state.isLoading
+                ? const CircularProgressIndicator()
+                : const Text('Planificar Viaje'),
+          ),
+        ),
+        const SizedBox(width: 12),
+        IconButton(
+          icon: const Icon(Icons.swap_horiz),
+          onPressed: _swapLocations,
+          tooltip: 'Intercambiar origen y destino',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultsSection(TripPlannerState state) {
+    if (state.isLoading) {
+      return const Expanded(child: Center(child: CircularProgressIndicator()));
+    }
+
+    if (state.errorMessage != null && state.routeOptions.isEmpty) {
+      return Expanded(
+        child: Center(
+          child: Text(
+            state.errorMessage!,
+            style: const TextStyle(color: Colors.red),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    if (state.routeOptions.isEmpty) {
+      return const Expanded(
+        child: Center(
+          child: Text(
+            'Selecciona origen y destino para planificar tu viaje',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    return Expanded(
+      child: ListView.builder(
+        itemCount: state.routeOptions.length,
+        itemBuilder: (context, index) {
+          final option = state.routeOptions[index];
+          return _buildRouteOptionCard(option, index);
+        },
+      ),
+    );
+  }
+
+  Widget _buildRouteOptionCard(RouteOption option, int index) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Opción ${index + 1}: ${option.routeName}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text('${option.estimatedTime} min'),
+                const SizedBox(width: 16),
+                Icon(Icons.directions_walk, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text('${option.walkingDistance.round()}m caminando'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(
+                  Icons.currency_exchange,
+                  size: 16,
+                  color: Colors.grey[600],
+                ),
+                const SizedBox(width: 4),
+                Text('C\$${option.fare.toStringAsFixed(2)}'),
+                const SizedBox(width: 16),
+                Icon(Icons.swap_horiz, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text('${option.transfers} transbordos'),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => _saveTripPlan(option),
+              child: const Text('Guardar Viaje'),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.map),
+              onPressed: () => _showRouteOnMap(option),
+              tooltip: 'Ver en mapa',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _selectLocation(bool isOrigin) async {
+    final result = await showDialog<LatLng>(
+      context: context,
+      builder: (context) => MapLocationPickerDialog(
+        initialPosition: _initialPosition,
+        title: isOrigin ? 'Seleccionar Origen' : 'Seleccionar Destino',
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        if (isOrigin) {
+          _selectedOrigin = result;
+          _originController.text =
+              '${result.latitude.toStringAsFixed(4)}, ${result.longitude.toStringAsFixed(4)}';
+        } else {
+          _selectedDestination = result;
+          _destinationController.text =
+              '${result.latitude.toStringAsFixed(4)}, ${result.longitude.toStringAsFixed(4)}';
+        }
+      });
+    }
+  }
+
+  void _swapLocations() {
+    setState(() {
+      final temp = _selectedOrigin;
+      _selectedOrigin = _selectedDestination;
+      _selectedDestination = temp;
+
+      final tempText = _originController.text;
+      _originController.text = _destinationController.text;
+      _destinationController.text = tempText;
+    });
+  }
+
+  void _showRouteOnMap(RouteOption option) {
+    final state = context.read<TripPlannerBloc>().state;
+
+    if (state.selectedOrigin != null && state.selectedDestination != null) {
+      showDialog(
+        context: context,
+        builder: (context) => RouteMapDialog(
+          routeOption: option,
+          origin: state.selectedOrigin!,
+          destination: state.selectedDestination!,
+        ),
+      );
+    }
+  }
+
+  void _updatePreferences({
+    bool? minimizeTransfers,
+    bool? minimizeWalking,
+    bool? prioritizeAccessibility,
+    int? maxWaitTime,
+    int? maxWalkingDistance,
+  }) {
+    final currentState = context.read<TripPlannerBloc>().state;
+    final newPreferences = currentState.currentPreferences.copyWith(
+      minimizeTransfers: minimizeTransfers,
+      minimizeWalking: minimizeWalking,
+      prioritizeAccessibility: prioritizeAccessibility,
+      maxWaitTime: maxWaitTime,
+      maxWalkingDistance: maxWalkingDistance,
+    );
+
+    context.read<TripPlannerBloc>().add(
+      UpdateTripPreferencesEvent(preferences: newPreferences),
+    );
+  }
+
+  void _planTrip() {
+    if (_selectedOrigin != null && _selectedDestination != null) {
+      context.read<TripPlannerBloc>().add(
+        PlanTripEvent(
+          origin: _selectedOrigin!,
+          destination: _selectedDestination!,
+        ),
+      );
+    }
+  }
+
+  void _saveTripPlan(RouteOption option) {
+    context.read<TripPlannerBloc>().add(
+      SaveTripPlanEvent(selectedOption: option),
+    );
+  }
+
+  void _showSavedTrips() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => const SavedTripsModal(), // ← Sin parámetros
+    );
+  }
+
+  void _clearSearch() {
+    setState(() {
+      _selectedOrigin = null;
+      _selectedDestination = null;
+      _originController.clear();
+      _destinationController.clear();
+    });
+
+    // Limpiar también el estado del bloc
+    context.read<TripPlannerBloc>().add(ClearSearchEvent());
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Búsqueda limpiada')));
+  }
+}
+```
+
+
 🎨 Coherencia Estética
 Interfaz de búsqueda: Campo de búsqueda prominente con sugerencias
 
@@ -1686,11 +2431,14 @@ Preferencias: Selectores intuitivos para criterios de viaje
 
 🚀 Navegación
 dart
+```c#
 // Flujo de planificación de viaje
 '/trip-planner' → Búsqueda inicial
 '/trip-results' → Lista de opciones
 '/trip-details' → Detalle de ruta seleccionada
 '/saved-trips' → Historial de viajes guardados
+```
+
 🎯 Análisis General de UX/UI
 ✅ Fortalezas Identificadas
 Consistencia visual en toda la aplicación
@@ -1713,6 +2461,7 @@ Accessibility improvements para usuarios con discapacidad
 🎨 Sistema de Diseño Consolidado
 Paleta de Colores Principal
 dart
+```c#
 const primaryColor = Color(0xFF4F46E5);    // Azul principal
 const secondaryColor = Color(0xFF10B981); // Verde éxito
 const accentColor = Color(0xFFF59E0B);    // Amarillo alerta
@@ -1724,6 +2473,8 @@ TextStyle(
   fontWeight: FontWeight.w400, // Regular
   fontSize: 16.0,
 )
+```
+
 📊 Métricas de Calidad UI/UX
 Métrica	Valor	Estado
 Tiempo de carga inicial	< 2 segundos	✅ Óptimo
@@ -1731,15 +2482,19 @@ Consistencia visual	95% de componentes reutilizables	✅ Excelente
 Navegación fluida	Transiciones < 300ms	✅ Bueno
 Accesibilidad	Soporte básico lectores pantalla	⚠️ Mejorable
 Feedback usuario	Confirmación todas las acciones	✅ Completo
+
 🔗 Integración con Arquitectura General
 🏗️ Patrón BLoC Implementado
 Cada pantalla sigue la estructura:
 
 dart
+```c#
 BlocProvider<FeatureBloc>(
   create: (context) => FeatureBloc(repository: featureRepository),
   child: FeaturePage(),
 )
+```
+
 🔄 Flujo de Datos
 text
 UI Widgets → BLoC Events → Use Cases → Repositories → Firebase
