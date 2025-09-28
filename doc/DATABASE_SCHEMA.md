@@ -3,8 +3,11 @@
 ## 🔥 Esquema Estructurado en Firebase Firestore
 
 Base de Datos: Firebase Firestore (NoSQL)
+
 Enfoque: Colecciones y Documentos con relaciones
+
 Características: Tiempo real, escalable, seguro
+
 
 ## 📖 Tabla de Contenidos
 
