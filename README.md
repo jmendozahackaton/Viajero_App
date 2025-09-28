@@ -104,22 +104,18 @@ lib/
 ### Instalación
 
 1. **Clonar el repositorio**
-```bash
 git clone https://github.com/jmendozahackaton/Viajero_App.git
 cd Viajero_App
 
 2. Instalar dependencias
-```bash
 flutter pub get
 
 3. Configurar variables de entorno
-```bash
 cp .env.example .env
 
 ### Editar .env con tus configuraciones de Firebase
 Ejecutar la aplicación
 
-```bash
 flutter run
 Configuración Firebase
 Crear proyecto en Firebase Console
@@ -155,7 +151,7 @@ Módulo Administrativo
 ✅ Dashboard con métricas en tiempo real
 ✅ Sistema de reportes automáticos
 
-🛠️ Tecnologías Utilizadas
+### 🛠️ Tecnologías Utilizadas
 Frontend
 Flutter 3.19 - Framework principal
 Dart 3.3 - Lenguaje de programación
@@ -176,7 +172,7 @@ Provider - Inyección de dependencias
 Equatable - Comparación de objetos
 Mockito - Testing unitario
 
-🏛️ Estructura del Proyecto
+### 🏛️ Estructura del Proyecto
 
 lib/
 ├── core/
@@ -263,10 +259,9 @@ Modo offline con sincronización
 Análisis predictivo de rutas
 Sistema de pagos integrado
 
-🤝 Contribución
+### 🤝 Contribución
 ¡Las contribuciones son bienvenidas! Para contribuir:
 
-Fork el proyecto
 Crea una rama para tu feature (git checkout -b feature/AmazingFeature)
 Commit tus cambios (git commit -m 'Add some AmazingFeature')
 Push a la rama (git push origin feature/AmazingFeature)
@@ -281,11 +276,11 @@ Usa mensajes de commit descriptivos
 📄 Licencia
 Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más detalles.
 
-👨‍💻 Desarrollado por
-Equipo Viajero App - Hackathon Nicaragua 2025
+### 👨‍💻 Desarrollado por
+Equipo Viajero App - Hackathon Nicaragua 2025 | INNOVATION TEAMS
 📧 Contacto: jmendozahackaton
 
-🙏 Agradecimientos
+### 🙏 Agradecimientos
 Hackathon Nicaragua 2025 por la oportunidad
 Comunidad Flutter por el apoyo y recursos
 Firebase Google por la infraestructura
