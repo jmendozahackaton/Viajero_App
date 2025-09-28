@@ -83,7 +83,6 @@ lib/
 ├── trips/ # Planificación de viajes
 └── admin/ # Panel administrativo
 
-
 ### 🔄 Flujo de Datos
 1. **Presentación** → Widgets y BLoC
 2. **Dominio** → Casos de uso y entidades
@@ -162,30 +161,38 @@ Módulo Administrativo
 ✅ Dashboard con métricas en tiempo real
 
 ✅ Sistema de reportes automáticos
-
-### 🛠️ Tecnologías Utilizadas
+🛠️ Tecnologías Utilizadas
 Frontend
 Flutter 3.19 - Framework principal
+
 Dart 3.3 - Lenguaje de programación
+
 BLoC Pattern - Gestión de estado
+
 GoRouter - Navegación declarativa
 
 Backend & Base de Datos
 Firebase Firestore - Base de datos NoSQL
+
 Firebase Authentication - Autenticación segura
+
 Cloud Functions - Lógica de backend (opcional)
 
 APIs y Servicios
 Google Maps SDK - Mapas y geolocalización
+
 Geolocator - Servicios de ubicación
+
 OneSignal - Notificaciones push
+
 Desarrollo y Calidad
 Provider - Inyección de dependencias
+
 Equatable - Comparación de objetos
+
 Mockito - Testing unitario
 
-### 🏛️ Estructura del Proyecto
-
+🏛️ Estructura del Proyecto
 lib/
 ├── core/
 │   ├── constants/      # AppConstants, RouteNames
@@ -207,27 +214,35 @@ lib/
     ├── trips/          # Trip planning
     ├── admin/          # Admin dashboard
     └── map/            # Interactive map
-
 👥 Roles de Usuario
 👤 Pasajero (Usuario Regular)
 Consultar rutas y horarios
+
 Planificar viajes
+
 Recibir notificaciones
+
 Ver buses en tiempo real
 
 🚗 Conductor (Usuario Privilegiado)
 Actualizar ubicación en tiempo real
+
 Gestionar estado del bus
+
 Recibir alertas de ruta
 
 👨💼 Administrador (IRTRAMMA)
 Gestión completa del sistema
+
 Monitoreo en tiempo real
+
 Generación de reportes
+
 Administración de usuarios
 
 🔧 Desarrollo
 Comandos útiles
+bash
 # Ejecutar en modo desarrollo
 flutter run
 
@@ -242,61 +257,86 @@ flutter analyze
 
 # Formatear código
 dart format .
-
 Configuración de entorno de desarrollo
 VS Code con extensiones Flutter y Dart
+
 Android Studio con emulador configurado
+
 Git para control de versiones
+
 Firebase CLI para despliegues
 
 📊 Estado del Proyecto
-
 ✅ Completado
 Arquitectura Clean Architecture + BLoC
+
 Autenticación completa con Firebase
+
 Mapa interactivo con Google Maps
+
 Sistema de planificación de viajes
-CRUD completo de usuarios y buses
+
+CRUD completo de buses y rutas
+
 Notificaciones en tiempo real
+
 Dashboard administrativo
 
 🚧 En Desarrollo
 Optimización de performance
+
 Tests unitarios completos
+
 Documentación avanzada
 
 📋 Próximas Features
 Integración con APIs de transporte real
+
 Modo offline con sincronización
+
 Análisis predictivo de rutas
+
 Sistema de pagos integrado
 
-### 🤝 Contribución
+🤝 Contribución
 ¡Las contribuciones son bienvenidas! Para contribuir:
 
+Fork el proyecto
+
 Crea una rama para tu feature (git checkout -b feature/AmazingFeature)
+
 Commit tus cambios (git commit -m 'Add some AmazingFeature')
+
 Push a la rama (git push origin feature/AmazingFeature)
+
 Abre un Pull Request
 
 Guías de contribución
 Sigue el patrón de código establecido
+
 Mantén la cobertura de tests
+
 Documenta nuevas funcionalidades
+
 Usa mensajes de commit descriptivos
 
 📄 Licencia
 Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más detalles.
 
-### 👨‍💻 Desarrollado por
-Equipo Viajero App - Hackathon Nicaragua 2025 | INNOVATION TEAMS
+👨‍💻 Desarrollado por
+Equipo Viajero App - Hackathon Nicaragua 2025
 📧 Contacto: jmendozahackaton
 
-### 🙏 Agradecimientos
+🙏 Agradecimientos
 Hackathon Nicaragua 2025 por la oportunidad
+
 Comunidad Flutter por el apoyo y recursos
+
 Firebase Google por la infraestructura
+
 Contribuidores que han apoyado el proyecto
+
+
 
 <div align="center">
 🚀 ¡Viajero App - Transformando el transporte público!
