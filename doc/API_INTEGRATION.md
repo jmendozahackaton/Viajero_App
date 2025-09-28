@@ -29,7 +29,7 @@ APIs Externas: Google Maps SDK, Geolocator
 🔄 Flujo Real de Datos en Tu 
 
 ```mermaid
-graph TB
+flowchart TD
     A[UI Widgets] --> B[BLoC Events]
     B --> C[Use Cases]
     C --> D[Repository Interfaces]
