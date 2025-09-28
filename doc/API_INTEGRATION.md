@@ -48,9 +48,10 @@ graph TB
     I --> I2[Distance Calculations]
 ```
 
-## **📁 Estructura Real de Tu Código**
+## 📁 **Estructura Real de Tu Código**
 
-lib/
+```plaintext
+lib/ 
 ├── features/
 │   ├── auth/
 │   │   ├── domain/repositories/auth_repository.dart
