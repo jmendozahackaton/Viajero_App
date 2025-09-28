@@ -63,7 +63,7 @@
 
 ### 🏛️ Clean Architecture Implementada
 
-lib/
+**lib/
 ├── core/ # Componentes transversales
 │ ├── constants/ # Constantes de la aplicación
 │ ├── routes/ # Navegación (GoRouter)
@@ -81,7 +81,7 @@ lib/
 ├── buses/ # Gestión de buses
 ├── routes/ # Gestión de rutas
 ├── trips/ # Planificación de viajes
-└── admin/ # Panel administrativo
+└── admin/ # Panel administrativo**
 
 ### 🔄 Flujo de Datos
 1. **Presentación** → Widgets y BLoC
@@ -107,26 +107,38 @@ git clone https://github.com/jmendozahackaton/Viajero_App.git
 cd Viajero_App
 
 2. Instalar dependencias
+
 flutter pub get
 
 3. Configurar variables de entorno
+
 cp .env.example .env
 
 ### Editar .env con tus configuraciones de Firebase
 Ejecutar la aplicación
 
 flutter run
+
 Configuración Firebase
+
 Crear proyecto en Firebase Console
+
 Habilitar Authentication y Firestore
+
+
 Descargar archivos de configuración:
+
 google-services.json (Android)
+
 GoogleService-Info.plist (iOS)
+
 Colocar archivos en las carpetas correspondientes
+
 Configurar reglas de seguridad en Firestore
 
 ## 📱 Funcionalidades
 Módulo de Autenticación
+
 ✅ Registro de usuarios con email/contraseña
 
 ✅ Login seguro con Firebase Auth
@@ -136,6 +148,7 @@ Módulo de Autenticación
 ✅ Recuperación de contraseñas
 
 Módulo de Mapas y Geolocalización
+
 ✅ Mapa interactivo con Google Maps
 
 ✅ Marcadores de buses en tiempo real
@@ -145,6 +158,7 @@ Módulo de Mapas y Geolocalización
 ✅ Rutas visualizadas con polilíneas
 
 Módulo de Planificación de Viajes
+
 ✅ Algoritmo inteligente de matching de rutas
 
 ✅ Cálculo de distancias y tiempos optimizados
@@ -154,6 +168,7 @@ Módulo de Planificación de Viajes
 ✅ Historial de viajes guardados
 
 Módulo Administrativo
+
 ✅ CRUD completo de buses y rutas
 
 ✅ Gestión de usuarios y permisos
@@ -164,6 +179,7 @@ Módulo Administrativo
 
 ## 🛠️ Tecnologías Utilizadas
 Frontend
+
 Flutter 3.19 - Framework principal
 
 Dart 3.3 - Lenguaje de programación
@@ -173,6 +189,7 @@ BLoC Pattern - Gestión de estado
 GoRouter - Navegación declarativa
 
 Backend & Base de Datos
+
 Firebase Firestore - Base de datos NoSQL
 
 Firebase Authentication - Autenticación segura
@@ -180,6 +197,7 @@ Firebase Authentication - Autenticación segura
 Cloud Functions - Lógica de backend (opcional)
 
 APIs y Servicios
+
 Google Maps SDK - Mapas y geolocalización
 
 Geolocator - Servicios de ubicación
@@ -187,6 +205,7 @@ Geolocator - Servicios de ubicación
 OneSignal - Notificaciones push
 
 Desarrollo y Calidad
+
 Provider - Inyección de dependencias
 
 Equatable - Comparación de objetos
@@ -195,7 +214,7 @@ Mockito - Testing unitario
 
 ## 🏛️ Estructura del Proyecto
 
-lib/
+**lib/
 ├── core/
 │   ├── constants/      # AppConstants, RouteNames
 │   ├── routes/         # AppRouter, RouteGuard
@@ -215,10 +234,11 @@ lib/
     ├── routes/         # Route management
     ├── trips/          # Trip planning
     ├── admin/          # Admin dashboard
-    └── map/            # Interactive map
+    └── map/            # Interactive map**
 
 ## 👥 Roles de Usuario
 👤 Pasajero (Usuario Regular)
+
 Consultar rutas y horarios
 
 Planificar viajes
@@ -244,8 +264,9 @@ Generación de reportes
 Administración de usuarios
 
 🔧 Desarrollo
+
 Comandos útiles
-bash
+
 # Ejecutar en modo desarrollo
 flutter run
 
@@ -260,7 +281,9 @@ flutter analyze
 
 # Formatear código
 dart format .
+
 Configuración de entorno de desarrollo
+
 VS Code con extensiones Flutter y Dart
 
 Android Studio con emulador configurado
@@ -271,6 +294,7 @@ Firebase CLI para despliegues
 
 ## 📊 Estado del Proyecto
 ✅ Completado
+
 Arquitectura Clean Architecture + BLoC
 
 Autenticación completa con Firebase
@@ -315,6 +339,7 @@ Push a la rama (git push origin feature/AmazingFeature)
 Abre un Pull Request
 
 Guías de contribución
+
 Sigue el patrón de código establecido
 
 Mantén la cobertura de tests
@@ -328,6 +353,9 @@ Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más deta
 
 ## 👨‍💻 Desarrollado por
 Equipo Viajero App - Hackathon Nicaragua 2025
+
+INNOVATION TEAMS
+
 📧 Contacto: jmendozahackaton
 
 ## 🙏 Agradecimientos
