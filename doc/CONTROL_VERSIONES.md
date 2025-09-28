@@ -1,10 +1,10 @@
-```markdown
-🔧 Control de Versiones - Viajero App
-📊 Gestión Organizada del Código con Git y GitHub
+# 🔧 Control de Versiones - Viajero App
+
+## 📊 Gestión Organizada del Código con Git y GitHub
 Repositorio: github.com/jmendozahackaton/Viajero_App
 Estrategia: Git Flow · Ramas: Feature-based · Commits: Conventional Commits
 
-📖 Tabla de Contenidos
+## 📖 Tabla de Contenidos
 🏗️ Estrategia de Ramas
 
 📝 Convención de Commits
@@ -19,8 +19,9 @@ Estrategia: Git Flow · Ramas: Feature-based · Commits: Conventional Commits
 
 🛠️ Comandos y Configuraciones
 
-🏗️ Estrategia de Ramas
+## 🏗️ Estrategia de Ramas
 🌳 Estructura de Ramas Principal
+
 ```mermaid
 gitGraph
     commit id: "Initial commit"
@@ -46,7 +47,8 @@ gitGraph
     merge release/v1.0.0 tag: "v1.0.0"
     checkout develop
     commit id: "Start v1.1.0 development"
-``` 
+    ...
+```
 
 📋 Ramas Definidas en el Proyecto
 Rama	Propósito	Estabilidad	Ejemplo
@@ -55,7 +57,6 @@ develop	Integración continua	🟡 Media	feature/ merges
 feature/*	Nuevas funcionalidades	🔴 Baja	feature/trip-planner
 hotfix/*	Correcciones críticas	🔴 Baja	hotfix/auth-bug
 release/*	Preparación releases	🟡 Media	release/v1.1.0
-
 🎯 Reglas de Protección de Ramas
 yaml
 # .github/branch-protection.yml
@@ -351,4 +352,3 @@ markdown
 👥 Equipo: Colaboración documentada en contributors.md
 
 "El control de versiones no es un lujo, es una necesidad para el desarrollo profesional." 🔧🚀
-```
