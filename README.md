@@ -63,7 +63,7 @@
 
 ### 🏛️ Clean Architecture Implementada
 
-**lib/
+lib/
 ├── core/ # Componentes transversales
 │ ├── constants/ # Constantes de la aplicación
 │ ├── routes/ # Navegación (GoRouter)
@@ -81,7 +81,7 @@
 ├── buses/ # Gestión de buses
 ├── routes/ # Gestión de rutas
 ├── trips/ # Planificación de viajes
-└── admin/ # Panel administrativo**
+└── admin/ # Panel administrativo
 
 ### 🔄 Flujo de Datos
 1. **Presentación** → Widgets y BLoC
@@ -147,6 +147,7 @@ Módulo de Autenticación
 
 ✅ Recuperación de contraseñas
 
+
 Módulo de Mapas y Geolocalización
 
 ✅ Mapa interactivo con Google Maps
@@ -157,6 +158,7 @@ Módulo de Mapas y Geolocalización
 
 ✅ Rutas visualizadas con polilíneas
 
+
 Módulo de Planificación de Viajes
 
 ✅ Algoritmo inteligente de matching de rutas
@@ -166,6 +168,7 @@ Módulo de Planificación de Viajes
 ✅ Múltiples criterios de preferencia
 
 ✅ Historial de viajes guardados
+
 
 Módulo Administrativo
 
@@ -188,6 +191,7 @@ BLoC Pattern - Gestión de estado
 
 GoRouter - Navegación declarativa
 
+
 Backend & Base de Datos
 
 Firebase Firestore - Base de datos NoSQL
@@ -195,6 +199,7 @@ Firebase Firestore - Base de datos NoSQL
 Firebase Authentication - Autenticación segura
 
 Cloud Functions - Lógica de backend (opcional)
+
 
 APIs y Servicios
 
@@ -214,7 +219,7 @@ Mockito - Testing unitario
 
 ## 🏛️ Estructura del Proyecto
 
-**lib/
+lib/
 ├── core/
 │   ├── constants/      # AppConstants, RouteNames
 │   ├── routes/         # AppRouter, RouteGuard
@@ -234,7 +239,7 @@ Mockito - Testing unitario
     ├── routes/         # Route management
     ├── trips/          # Trip planning
     ├── admin/          # Admin dashboard
-    └── map/            # Interactive map**
+    └── map/            # Interactive map
 
 ## 👥 Roles de Usuario
 👤 Pasajero (Usuario Regular)
