@@ -21,6 +21,33 @@ Estrategia: Git Flow · Ramas: Feature-based · Commits: Conventional Commits
 
 🏗️ Estrategia de Ramas
 🌳 Estructura de Ramas Principal
+```mermaid
+gitGraph
+    commit id: "Initial commit"
+    branch develop
+    checkout develop
+    commit id: "Setup project structure"
+    branch feature/auth-system
+    checkout feature/auth-system
+    commit id: "Add Firebase Auth integration"
+    commit id: "Implement login UI"
+    checkout develop
+    merge feature/auth-system id: "Merge auth feature"
+    branch feature/map-implementation
+    checkout feature/map-implementation
+    commit id: "Add Google Maps SDK"
+    commit id: "Implement bus markers"
+    checkout develop
+    merge feature/map-implementation
+    branch release/v1.0.0
+    checkout release/v1.0.0
+    commit id: "Fix bugs and prepare release"
+    checkout main
+    merge release/v1.0.0 tag: "v1.0.0"
+    checkout develop
+    commit id: "Start v1.1.0 development"
+``` 
+
 📋 Ramas Definidas en el Proyecto
 Rama	Propósito	Estabilidad	Ejemplo
 main	Producción estable	🟢 Alta	v1.0.0
@@ -28,6 +55,7 @@ develop	Integración continua	🟡 Media	feature/ merges
 feature/*	Nuevas funcionalidades	🔴 Baja	feature/trip-planner
 hotfix/*	Correcciones críticas	🔴 Baja	hotfix/auth-bug
 release/*	Preparación releases	🟡 Media	release/v1.1.0
+
 🎯 Reglas de Protección de Ramas
 yaml
 # .github/branch-protection.yml
